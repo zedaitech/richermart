@@ -1923,17 +1923,22 @@
         </div>
       </div>
 
-      <div class="footer-compliance">
-        <p x-show="store.drug_license_no"><strong>Drug License No:</strong> <span x-text="store.drug_license_no"></span></p>
-        <p x-show="store.fssai_license_no"><strong>FSSAI License No:</strong> <span x-text="store.fssai_license_no"></span></p>
-        <p x-show="store.pharmacist_name"><strong>Registered Pharmacist:</strong> <span x-text="store.pharmacist_name"></span></p>
-        <p x-show="store.gstin"><strong>GSTIN:</strong> <span x-text="store.gstin"></span></p>
-      </div>
-      <p class="footer-disclaimer">
-        Medicines are dispensed only against a valid prescription where required.
-        Information on this site is for reference only and is not a substitute for professional
-        medical advice. Consult a qualified physician before starting any medication.
-      </p>
+      <!-- Compliance + medical disclaimer — relevant only to the Medicines section -->
+      <template x-if="activeSection === 'medicines'">
+        <div>
+          <div class="footer-compliance">
+            <p x-show="store.drug_license_no"><strong>Drug License No:</strong> <span x-text="store.drug_license_no"></span></p>
+            <p x-show="store.fssai_license_no"><strong>FSSAI License No:</strong> <span x-text="store.fssai_license_no"></span></p>
+            <p x-show="store.pharmacist_name"><strong>Registered Pharmacist:</strong> <span x-text="store.pharmacist_name"></span></p>
+            <p x-show="store.gstin"><strong>GSTIN:</strong> <span x-text="store.gstin"></span></p>
+          </div>
+          <p class="footer-disclaimer">
+            Medicines are dispensed only against a valid prescription where required.
+            Information on this site is for reference only and is not a substitute for professional
+            medical advice. Consult a qualified physician before starting any medication.
+          </p>
+        </div>
+      </template>
       <p class="footer-credit">
         Powered by <a href="https://www.zedai.tech" target="_blank" rel="noopener">ZedAi.Tech</a>
       </p>
