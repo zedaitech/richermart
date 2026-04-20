@@ -1,0 +1,58 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Friendly public routes → functions
+[[redirects]]
+  from = "/api/catalog"
+  to = "/.netlify/functions/catalog"
+  status = 200
+
+[[redirects]]
+  from = "/api/rx-upload"
+  to = "/.netlify/functions/rx-upload"
+  status = 200
+
+[[redirects]]
+  from = "/api/rx/:id"
+  to = "/.netlify/functions/rx-file?id=:id"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/login"
+  to = "/.netlify/functions/admin-login"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/store"
+  to = "/.netlify/functions/admin-store"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/categories"
+  to = "/.netlify/functions/admin-categories"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/categories/:id"
+  to = "/.netlify/functions/admin-categories?id=:id"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/items"
+  to = "/.netlify/functions/admin-items"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/items/:id"
+  to = "/.netlify/functions/admin-items?id=:id"
+  status = 200
+
+# Keep these out of the deployed site
+[[headers]]
+  for = "/admin/seed.mjs"
+  [headers.values]
+    X-Robots-Tag = "noindex"

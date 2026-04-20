@@ -1,0 +1,14 @@
+{
+  "name": "digimenu",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "GreenLeaf Mart — Fruits & Medicines static site + Netlify Functions backed by Neon Postgres",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.1",
+    "@netlify/blobs": "^8.1.0"
+  }
+}

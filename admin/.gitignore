@@ -1,0 +1,6 @@
+uploads/
+snapshots/
+.env
+node_modules/
+data.db
+data.db-journal

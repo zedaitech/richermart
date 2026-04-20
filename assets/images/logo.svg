@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
   <defs>
     <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#d4af37"/>
-      <stop offset="100%" stop-color="#f0d060"/>
+      <stop offset="0%" stop-color="#16a34a"/>
+      <stop offset="100%" stop-color="#22c55e"/>
     </linearGradient>
   </defs>
-  <circle cx="60" cy="60" r="58" fill="#111113" stroke="url(#g)" stroke-width="3"/>
-  <text x="60" y="45" text-anchor="middle" font-family="Georgia, serif" font-size="16" font-weight="bold" fill="#d4af37">MAST</text>
-  <text x="60" y="65" text-anchor="middle" font-family="Georgia, serif" font-size="12" fill="#f0d060">MALVANI</text>
-  <line x1="28" y1="74" x2="92" y2="74" stroke="#d4af37" stroke-width="0.5" opacity="0.5"/>
-  <text x="60" y="88" text-anchor="middle" font-family="sans-serif" font-size="7" fill="#8a8f98" letter-spacing="2">EST. 1998</text>
+  <circle cx="60" cy="60" r="58" fill="#ffffff" stroke="url(#g)" stroke-width="3"/>
+  <path d="M60 32c-5 10-14 14-14 26a14 14 0 0 0 28 0c0-12-9-16-14-26z" fill="url(#g)"/>
+  <path d="M60 36c2 8 8 11 8 21" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+  <text x="60" y="88" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#0f172a" letter-spacing="1.2">GREENLEAF</text>
+  <text x="60" y="100" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="6" fill="#64748b" letter-spacing="2">FRUITS &amp; MEDS</text>
 </svg>

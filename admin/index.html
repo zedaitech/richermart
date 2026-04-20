@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin · GreenLeaf Mart</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#16a34a">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface2: #f1f5f9;
+      --surface3: #e2e8f0;
+      --border: #e5e7eb;
+      --border-strong: #cbd5e1;
+      --text: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --primary: #16a34a;
+      --primary-hover: #15803d;
+      --primary-tint: #dcfce7;
+      --primary-ink: #052e16;
+      --accent-blue: #2563eb;
+      --accent-blue-tint: #dbeafe;
+      --accent-amber: #f59e0b;
+      --accent-amber-tint: #fef3c7;
+      --accent-red: #dc2626;
+      --accent-red-tint: #fee2e2;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-xs: 6px;
+      --shadow-sm: 0 1px 2px rgba(15,23,42,0.05);
+      --shadow-md: 0 4px 14px rgba(15,23,42,0.08);
+      --shadow-lg: 0 12px 36px rgba(15,23,42,0.14);
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; line-height: 1.5; }
+    [x-cloak] { display: none !important; }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
+
+    :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    button { font-family: var(--font); cursor: pointer; }
+    input, select, textarea { font-family: var(--font); }
+
+    /* ===== Login ===== */
+    .login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+    .login-card {
+      width: 100%; max-width: 380px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 28px; box-shadow: var(--shadow-md);
+    }
+    .login-card h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
+    .login-card p { color: var(--text-muted); font-size: 0.85rem; margin-top: 2px; }
+
+    /* ===== Shell ===== */
+    .app { display: grid; grid-template-rows: auto 1fr; min-height: 100vh; }
+
+    .topbar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      position: sticky; top: 0; z-index: 20;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
+    .topbar-logo {
+      width: 32px; height: 32px; border-radius: 8px; background: var(--primary-tint); color: var(--primary);
+      display: grid; place-items: center; font-weight: 800;
+    }
+    .topbar-title { font-weight: 700; letter-spacing: -0.01em; font-size: 0.95rem; }
+    .topbar-sub { color: var(--text-muted); font-size: 0.74rem; }
+
+    .tabs { display: flex; gap: 4px; padding: 4px; background: var(--surface2); border-radius: var(--radius-sm); }
+    .tab {
+      padding: 7px 14px; border-radius: 6px; border: none; background: transparent;
+      color: var(--text-secondary); font-size: 0.82rem; font-weight: 600;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { background: var(--surface); color: var(--primary); box-shadow: var(--shadow-sm); }
+
+    .topbar-right { display: flex; align-items: center; gap: 8px; }
+    .view-site {
+      font-size: 0.78rem; color: var(--text-secondary); text-decoration: none;
+      padding: 6px 10px; border-radius: var(--radius-xs); border: 1px solid var(--border);
+    }
+    .view-site:hover { background: var(--surface2); color: var(--text); }
+
+    .content {
+      max-width: 1100px; margin: 0 auto; width: 100%; padding: 20px 16px 80px;
+    }
+
+    .page-title {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      margin-bottom: 16px;
+    }
+    .page-title h2 { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.01em; }
+    .page-title p { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* ===== Buttons ===== */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 14px; border-radius: var(--radius-xs); font-size: 0.84rem; font-weight: 600;
+      border: 1px solid var(--border); background: var(--surface); color: var(--text);
+      transition: all 0.15s ease; min-height: 38px;
+    }
+    .btn:hover { background: var(--surface2); border-color: var(--border-strong); }
+    .btn--primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .btn--primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+    .btn--danger { color: var(--accent-red); border-color: var(--accent-red-tint); }
+    .btn--danger:hover { background: var(--accent-red-tint); }
+    .btn--ghost { background: transparent; border-color: transparent; color: var(--text-secondary); padding: 6px 10px; }
+    .btn--ghost:hover { background: var(--surface2); }
+    .btn[disabled] { opacity: 0.5; pointer-events: none; }
+
+    /* ===== Forms ===== */
+    .form-row { display: grid; gap: 6px; margin-bottom: 12px; }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 580px) { .form-grid-2 { grid-template-columns: 1fr; } }
+    .form-label { font-size: 0.78rem; font-weight: 600; color: var(--text-secondary); }
+    .form-label .req { color: var(--accent-red); }
+    .form-help { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+    .form-input, .form-select, textarea.form-input {
+      width: 100%; padding: 9px 11px; border-radius: var(--radius-xs); border: 1.5px solid var(--border);
+      background: var(--surface); color: var(--text); font-size: 0.88rem; min-height: 38px;
+      transition: border-color 0.15s, box-shadow 0.15s; outline: none;
+    }
+    .form-input:focus, .form-select:focus, textarea.form-input:focus {
+      border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-tint);
+    }
+    textarea.form-input { resize: vertical; min-height: 72px; }
+    .checkbox { display: inline-flex; align-items: center; gap: 8px; font-size: 0.86rem; cursor: pointer; }
+    .checkbox input { width: 16px; height: 16px; accent-color: var(--primary); }
+
+    /* ===== Cards / tables ===== */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow-sm);
+      padding: 18px;
+    }
+
+    .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    .table th, .table td { padding: 11px 12px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .table th { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); background: var(--surface2); }
+    .table tr:last-child td { border-bottom: none; }
+    .table tr:hover td { background: var(--surface2); }
+    .table td.right, .table th.right { text-align: right; }
+    .thumb {
+      width: 40px; height: 40px; border-radius: 8px; object-fit: cover; background: var(--surface2);
+    }
+    .thumb-placeholder {
+      width: 40px; height: 40px; border-radius: 8px; background: var(--surface2);
+      display: grid; place-items: center; font-size: 1.1rem;
+    }
+
+    .chip {
+      font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 9999px;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .chip--fruits { background: var(--primary-tint); color: var(--primary-ink); }
+    .chip--medicines { background: var(--accent-blue-tint); color: #0b1d4d; }
+    .chip--rx { background: var(--accent-red-tint); color: #7f1d1d; }
+    .chip--otc { background: var(--surface2); color: var(--text-secondary); }
+    .chip--off { background: var(--surface2); color: var(--text-muted); }
+
+    .filter-bar {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      margin-bottom: 14px;
+    }
+    .search-input {
+      min-width: 220px; padding: 8px 12px; border-radius: 9999px; border: 1px solid var(--border);
+      font-size: 0.86rem; background: var(--surface); outline: none;
+    }
+    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-tint); }
+
+    /* ===== Modal ===== */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(15,23,42,0.5); backdrop-filter: blur(3px); z-index: 40;
+      display: grid; place-items: center; padding: 16px;
+    }
+    .modal {
+      background: var(--surface); border-radius: var(--radius); max-width: 640px; width: 100%;
+      max-height: 92vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--shadow-lg);
+    }
+    .modal-head {
+      padding: 14px 18px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-head h3 { font-size: 1rem; font-weight: 700; letter-spacing: -0.01em; }
+    .modal-body { padding: 18px; overflow-y: auto; }
+    .modal-foot { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+
+    /* ===== Empty / errors ===== */
+    .empty { text-align: center; padding: 60px 16px; color: var(--text-muted); }
+    .alert {
+      padding: 10px 12px; border-radius: var(--radius-xs); font-size: 0.82rem;
+      background: var(--accent-red-tint); color: #7f1d1d; border: 1px solid rgba(220,38,38,0.2);
+    }
+    .alert--ok { background: var(--primary-tint); color: var(--primary-ink); border-color: transparent; }
+
+    /* ===== Toast ===== */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 80;
+      background: var(--text); color: #fff; padding: 10px 18px; border-radius: 9999px;
+      font-size: 0.84rem; font-weight: 500; box-shadow: var(--shadow-lg);
+    }
+
+    .section-pill {
+      font-size: 0.72rem; font-weight: 600; padding: 4px 10px; border-radius: 9999px;
+      background: var(--surface2); border: 1px solid var(--border); color: var(--text-secondary);
+    }
+    .section-pill.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .section-pill.active.blue { background: var(--accent-blue); border-color: var(--accent-blue); }
+
+    .row-actions { display: flex; gap: 4px; justify-content: flex-end; }
+    .icon-btn {
+      width: 32px; height: 32px; display: grid; place-items: center;
+      border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text-secondary);
+    }
+    .icon-btn:hover { background: var(--surface2); color: var(--text); }
+    .icon-btn.danger:hover { background: var(--accent-red-tint); color: var(--accent-red); border-color: rgba(220,38,38,0.3); }
+  </style>
+</head>
+
+<body x-data="adminApp()" x-init="init()">
+
+  <!-- Login screen -->
+  <div x-show="!token" x-cloak class="login-wrap">
+    <div class="login-card">
+      <h1>Admin sign-in</h1>
+      <p>Enter the admin password to manage the catalog.</p>
+      <form @submit.prevent="login()" style="margin-top:18px">
+        <div class="form-row">
+          <label class="form-label" for="pw">Password</label>
+          <input id="pw" type="password" class="form-input" x-model="pw" autocomplete="current-password" required>
+        </div>
+        <div x-show="loginError" class="alert" x-text="loginError" style="margin-bottom:12px"></div>
+        <button type="submit" class="btn btn--primary" style="width:100%" :disabled="busy">
+          <span x-text="busy ? 'Signing in...' : 'Sign in'"></span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Shell -->
+  <div x-show="token" x-cloak class="app">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-logo">G</div>
+        <div>
+          <div class="topbar-title">GreenLeaf Mart Admin</div>
+          <div class="topbar-sub">Catalog &amp; store management</div>
+        </div>
+      </div>
+      <div class="tabs" role="tablist">
+        <button class="tab" :class="tab==='store'&&'active'" @click="tab='store'">Store</button>
+        <button class="tab" :class="tab==='categories'&&'active'" @click="tab='categories'">Categories</button>
+        <button class="tab" :class="tab==='items'&&'active'" @click="tab='items'">Items</button>
+      </div>
+      <div class="topbar-right">
+        <a class="view-site" href="/" target="_blank" rel="noopener">View site &rarr;</a>
+        <button class="btn btn--ghost" @click="logout()">Sign out</button>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- STORE -->
+      <section x-show="tab==='store'">
+        <div class="page-title">
+          <div>
+            <h2>Store settings</h2>
+            <p>Brand, contact, and compliance info shown across the storefront.</p>
+          </div>
+          <div>
+            <button class="btn btn--primary" @click="saveStore()" :disabled="storeBusy">
+              <span x-text="storeBusy ? 'Saving...' : 'Save changes'"></span>
+            </button>
+          </div>
+        </div>
+
+        <div x-show="storeSaved" class="alert alert--ok" style="margin-bottom:14px">Saved.</div>
+
+        <div class="card">
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label class="form-label">Store name <span class="req">*</span></label>
+              <input class="form-input" x-model="store.name" required>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Tagline</label>
+              <input class="form-input" x-model="store.tagline">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Phone (country code, no +)</label>
+              <input class="form-input" x-model="store.phone" placeholder="91XXXXXXXXXX">
+              <p class="form-help">WhatsApp orders are sent to this number.</p>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Logo URL</label>
+              <input class="form-input" x-model="store.logo" placeholder="/assets/images/logo.svg">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Google Maps URL</label>
+              <input class="form-input" x-model="store.google_maps_url">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Status</label>
+              <select class="form-select" x-model="store.status">
+                <option value="Open">Open</option>
+                <option value="Closed">Closed</option>
+              </select>
+            </div>
+          </div>
+
+          <h3 style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin:20px 0 10px">Compliance</h3>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label class="form-label">Drug License No</label>
+              <input class="form-input" x-model="store.drug_license_no">
+            </div>
+            <div class="form-row">
+              <label class="form-label">FSSAI License No</label>
+              <input class="form-input" x-model="store.fssai_license_no">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Registered Pharmacist</label>
+              <input class="form-input" x-model="store.pharmacist_name">
+            </div>
+            <div class="form-row">
+              <label class="form-label">GSTIN</label>
+              <input class="form-input" x-model="store.gstin">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CATEGORIES -->
+      <section x-show="tab==='categories'">
+        <div class="page-title">
+          <div>
+            <h2>Categories</h2>
+            <p>Group items into sections (Fruits or Medicines) with a display order.</p>
+          </div>
+          <button class="btn btn--primary" @click="openCategoryEditor(null)">+ Add category</button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="width:60px">Sort</th>
+                <th>Name</th>
+                <th>Section</th>
+                <th>Status</th>
+                <th>Items</th>
+                <th class="right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-if="categories.length === 0">
+                <tr><td colspan="6"><div class="empty">No categories yet. Add one to start building your catalog.</div></td></tr>
+              </template>
+              <template x-for="c in categories" :key="c.id">
+                <tr>
+                  <td x-text="c.sort"></td>
+                  <td style="font-weight:600" x-text="c.name"></td>
+                  <td><span class="chip" :class="c.section==='fruits'?'chip--fruits':'chip--medicines'" x-text="c.section"></span></td>
+                  <td><span class="chip" :class="c.is_active?'chip--otc':'chip--off'" x-text="c.is_active?'Active':'Hidden'"></span></td>
+                  <td x-text="countItemsForCategory(c.id)"></td>
+                  <td class="right">
+                    <div class="row-actions">
+                      <button class="icon-btn" @click="openCategoryEditor(c)" title="Edit">&#9998;</button>
+                      <button class="icon-btn danger" @click="deleteCategory(c)" title="Delete">&#128465;</button>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ITEMS -->
+      <section x-show="tab==='items'">
+        <div class="page-title">
+          <div>
+            <h2>Items</h2>
+            <p>Every product in the catalog. Fields adapt to the section.</p>
+          </div>
+          <button class="btn btn--primary" @click="openItemEditor(null)" :disabled="categories.length === 0">
+            + Add item
+          </button>
+        </div>
+
+        <div x-show="categories.length === 0" class="alert" style="margin-bottom:14px">
+          Create at least one category before adding items.
+        </div>
+
+        <div class="filter-bar">
+          <button class="section-pill" :class="itemsFilter==='all' && 'active'" @click="itemsFilter='all'">All <span x-text="'(' + items.length + ')'"></span></button>
+          <button class="section-pill" :class="itemsFilter==='fruits' && 'active'" @click="itemsFilter='fruits'">Fruits <span x-text="'(' + items.filter(i=>i.section==='fruits').length + ')'"></span></button>
+          <button class="section-pill" :class="itemsFilter==='medicines' && 'active blue'" @click="itemsFilter='medicines'">Medicines <span x-text="'(' + items.filter(i=>i.section==='medicines').length + ')'"></span></button>
+          <input class="search-input" type="search" placeholder="Search items..." x-model="itemsSearch">
+        </div>
+
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="width:60px"></th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Details</th>
+                <th class="right">Price</th>
+                <th>Status</th>
+                <th class="right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template x-if="filteredItems.length === 0">
+                <tr><td colspan="7"><div class="empty">No items match.</div></td></tr>
+              </template>
+              <template x-for="i in filteredItems" :key="i.id">
+                <tr>
+                  <td>
+                    <template x-if="i.image"><img class="thumb" :src="i.image" :alt="i.name" loading="lazy"></template>
+                    <template x-if="!i.image"><div class="thumb-placeholder" x-text="i.section==='fruits'?'🍎':'💊'"></div></template>
+                  </td>
+                  <td>
+                    <div style="font-weight:600" x-text="i.name"></div>
+                    <div style="font-size:0.72rem;color:var(--text-muted)" x-text="i.description"></div>
+                  </td>
+                  <td>
+                    <span class="chip" :class="i.section==='fruits'?'chip--fruits':'chip--medicines'" x-text="i.category_name"></span>
+                  </td>
+                  <td style="font-size:0.78rem;color:var(--text-secondary)">
+                    <template x-if="i.section==='fruits'">
+                      <span>
+                        <span x-text="i.origin || ''"></span>
+                        <span x-show="i.origin && i.unit"> · </span>
+                        <span x-text="unitLabel(i.unit)"></span>
+                        <template x-if="i.is_organic"><span class="chip chip--fruits" style="margin-left:4px">Organic</span></template>
+                        <template x-if="i.is_seasonal"><span class="chip" style="background:var(--accent-amber-tint);color:#78350f;margin-left:4px">Seasonal</span></template>
+                      </span>
+                    </template>
+                    <template x-if="i.section==='medicines'">
+                      <span>
+                        <span x-text="i.brand || ''"></span>
+                        <span x-show="i.brand && i.dosage"> · </span>
+                        <span x-text="i.dosage || ''"></span>
+                        <span x-show="(i.brand || i.dosage) && i.pack_size"> · </span>
+                        <span x-text="i.pack_size || ''"></span>
+                        <template x-if="i.requires_prescription"><span class="chip chip--rx" style="margin-left:4px">Rx</span></template>
+                      </span>
+                    </template>
+                  </td>
+                  <td class="right" style="font-weight:700;font-variant-numeric:tabular-nums" x-text="'₹' + (i.price || 0).toLocaleString('en-IN')"></td>
+                  <td>
+                    <template x-if="i.in_stock && i.is_active"><span class="chip chip--otc">In stock</span></template>
+                    <template x-if="i.in_stock && !i.is_active"><span class="chip chip--off">Hidden</span></template>
+                    <template x-if="!i.in_stock"><span class="chip chip--off">Sold out</span></template>
+                  </td>
+                  <td class="right">
+                    <div class="row-actions">
+                      <button class="icon-btn" @click="openItemEditor(i)" title="Edit">&#9998;</button>
+                      <button class="icon-btn danger" @click="deleteItem(i)" title="Delete">&#128465;</button>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Category modal -->
+  <div x-show="catEditor.open" x-cloak class="modal-backdrop" @click.self="catEditor.open=false" @keydown.escape.window="catEditor.open=false">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 x-text="catEditor.mode === 'new' ? 'Add category' : 'Edit category'"></h3>
+        <button class="btn btn--ghost" @click="catEditor.open=false">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div x-show="catEditor.error" class="alert" style="margin-bottom:12px" x-text="catEditor.error"></div>
+        <div class="form-row">
+          <label class="form-label">Name <span class="req">*</span></label>
+          <input class="form-input" x-model="catEditor.form.name" placeholder="e.g. Seasonal Fruits">
+        </div>
+        <div class="form-grid-2">
+          <div class="form-row">
+            <label class="form-label">Section <span class="req">*</span></label>
+            <select class="form-select" x-model="catEditor.form.section">
+              <option value="fruits">Fruits</option>
+              <option value="medicines">Medicines</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label class="form-label">Sort order</label>
+            <input class="form-input" type="number" x-model.number="catEditor.form.sort">
+            <p class="form-help">Lower numbers show first.</p>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="checkbox"><input type="checkbox" x-model="catEditor.form.is_active"> Visible on the storefront</label>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" @click="catEditor.open=false">Cancel</button>
+        <button class="btn btn--primary" @click="saveCategory()" :disabled="catEditor.busy">
+          <span x-text="catEditor.busy ? 'Saving...' : 'Save'"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Item modal -->
+  <div x-show="itemEditor.open" x-cloak class="modal-backdrop" @click.self="itemEditor.open=false" @keydown.escape.window="itemEditor.open=false">
+    <div class="modal">
+      <div class="modal-head">
+        <h3 x-text="itemEditor.mode === 'new' ? 'Add item' : 'Edit item'"></h3>
+        <button class="btn btn--ghost" @click="itemEditor.open=false">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div x-show="itemEditor.error" class="alert" style="margin-bottom:12px" x-text="itemEditor.error"></div>
+
+        <div class="form-row">
+          <label class="form-label">Category <span class="req">*</span></label>
+          <select class="form-select" x-model.number="itemEditor.form.category_id" @change="onCategoryChange()">
+            <option :value="null">— Select a category —</option>
+            <template x-for="c in categories" :key="c.id">
+              <option :value="c.id" x-text="c.name + ' (' + c.section + ')'"></option>
+            </template>
+          </select>
+        </div>
+
+        <div class="form-grid-2">
+          <div class="form-row">
+            <label class="form-label">Name <span class="req">*</span></label>
+            <input class="form-input" x-model="itemEditor.form.name">
+          </div>
+          <div class="form-row">
+            <label class="form-label">Price (₹) <span class="req">*</span></label>
+            <input class="form-input" type="number" min="0" x-model.number="itemEditor.form.price">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Description</label>
+          <textarea class="form-input" x-model="itemEditor.form.description" rows="2"></textarea>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label">Image URL</label>
+          <input class="form-input" x-model="itemEditor.form.image" placeholder="https://...">
+          <p class="form-help">Paste any public URL. Falls back to an emoji if blank.</p>
+        </div>
+
+        <!-- Fruits-only -->
+        <template x-if="currentSection() === 'fruits'">
+          <div>
+            <h4 style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--primary);margin:16px 0 10px">🍎 Fruits details</h4>
+            <div class="form-grid-2">
+              <div class="form-row">
+                <label class="form-label">Pricing unit</label>
+                <select class="form-select" x-model="itemEditor.form.unit">
+                  <option value="">—</option>
+                  <option value="per_kg">Per kg</option>
+                  <option value="per_dozen">Per dozen</option>
+                  <option value="per_piece">Per piece</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label class="form-label">Origin / region</label>
+                <input class="form-input" x-model="itemEditor.form.origin" placeholder="e.g. Ratnagiri, Maharashtra">
+              </div>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Weight options (JSON)</label>
+              <textarea class="form-input" x-model="itemEditor.form.weight_options" rows="4"
+                placeholder='[{"label":"500g","grams":500,"price":120},{"label":"1 kg","grams":1000,"price":220}]'></textarea>
+              <p class="form-help">Leave blank to use the main price only. Buyer picks a weight on the card.</p>
+            </div>
+            <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:4px">
+              <label class="checkbox"><input type="checkbox" x-model="itemEditor.form.is_organic"> Organic</label>
+              <label class="checkbox"><input type="checkbox" x-model="itemEditor.form.is_seasonal"> In season</label>
+            </div>
+          </div>
+        </template>
+
+        <!-- Medicines-only -->
+        <template x-if="currentSection() === 'medicines'">
+          <div>
+            <h4 style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent-blue);margin:16px 0 10px">💊 Medicine details</h4>
+            <div class="form-grid-2">
+              <div class="form-row">
+                <label class="form-label">Brand / manufacturer</label>
+                <input class="form-input" x-model="itemEditor.form.brand" placeholder="e.g. Crocin, Sun Pharma">
+              </div>
+              <div class="form-row">
+                <label class="form-label">Dosage / strength</label>
+                <input class="form-input" x-model="itemEditor.form.dosage" placeholder="e.g. 500 mg">
+              </div>
+              <div class="form-row">
+                <label class="form-label">Form</label>
+                <select class="form-select" x-model="itemEditor.form.form">
+                  <option value="">—</option>
+                  <option value="tablet">Tablet</option>
+                  <option value="capsule">Capsule</option>
+                  <option value="syrup">Syrup</option>
+                  <option value="cream">Cream</option>
+                  <option value="ointment">Ointment</option>
+                  <option value="drops">Drops</option>
+                  <option value="injection">Injection</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <label class="form-label">Pack size</label>
+                <input class="form-input" x-model="itemEditor.form.pack_size" placeholder="e.g. Strip of 10, 100 ml">
+              </div>
+            </div>
+            <div style="margin-top:4px">
+              <label class="checkbox"><input type="checkbox" x-model="itemEditor.form.requires_prescription"> Requires prescription (Rx)</label>
+            </div>
+          </div>
+        </template>
+
+        <h4 style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin:18px 0 10px">Display</h4>
+        <div class="form-grid-2">
+          <div class="form-row">
+            <label class="form-label">Sort order</label>
+            <input class="form-input" type="number" x-model.number="itemEditor.form.sort">
+          </div>
+        </div>
+        <div style="display:flex;gap:18px;flex-wrap:wrap">
+          <label class="checkbox"><input type="checkbox" x-model="itemEditor.form.in_stock"> In stock</label>
+          <label class="checkbox"><input type="checkbox" x-model="itemEditor.form.is_featured"> Featured</label>
+          <label class="checkbox"><input type="checkbox" x-model="itemEditor.form.is_active"> Visible on the storefront</label>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" @click="itemEditor.open=false">Cancel</button>
+        <button class="btn btn--primary" @click="saveItem()" :disabled="itemEditor.busy">
+          <span x-text="itemEditor.busy ? 'Saving...' : 'Save'"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div x-show="toast" x-cloak x-transition.opacity class="toast" x-text="toast"></div>
+
+  <script>
+    function adminApp() {
+      return {
+        // auth
+        token: '', pw: '', loginError: '', busy: false,
+        // ui
+        tab: 'store', toast: '',
+        // data
+        store: {},
+        categories: [],
+        items: [],
+        // filters
+        itemsFilter: 'all', itemsSearch: '',
+        // editors
+        catEditor: { open: false, mode: 'new', busy: false, error: '', form: emptyCategory() },
+        itemEditor: { open: false, mode: 'new', busy: false, error: '', form: emptyItem() },
+        // store save flag
+        storeBusy: false, storeSaved: false,
+
+        init() {
+          this.token = localStorage.getItem('gm_admin_token') || '';
+          if (this.token) this.refreshAll();
+        },
+
+        async login() {
+          this.loginError = '';
+          this.busy = true;
+          try {
+            const res = await fetch('/api/admin/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ password: this.pw }),
+            });
+            if (!res.ok) {
+              const j = await res.json().catch(()=>({}));
+              this.loginError = j.error || 'Sign-in failed';
+              this.busy = false;
+              return;
+            }
+            const { token } = await res.json();
+            this.token = token;
+            localStorage.setItem('gm_admin_token', token);
+            this.pw = '';
+            this.refreshAll();
+          } catch (e) {
+            this.loginError = 'Network error';
+          } finally {
+            this.busy = false;
+          }
+        },
+
+        logout() {
+          this.token = '';
+          localStorage.removeItem('gm_admin_token');
+        },
+
+        async api(path, options = {}) {
+          const res = await fetch(path, {
+            ...options,
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + this.token,
+              ...(options.headers || {}),
+            },
+          });
+          if (res.status === 401) { this.logout(); throw new Error('Session expired. Please sign in.'); }
+          const text = await res.text();
+          const body = text ? JSON.parse(text) : null;
+          if (!res.ok) throw new Error((body && body.error) || `Request failed (${res.status})`);
+          return body;
+        },
+
+        async refreshAll() {
+          try {
+            await Promise.all([ this.loadStore(), this.loadCategories(), this.loadItems() ]);
+          } catch (e) { this.showToast(e.message); }
+        },
+
+        async loadStore() { this.store = await this.api('/api/admin/store'); },
+        async loadCategories() { this.categories = await this.api('/api/admin/categories'); },
+        async loadItems() { this.items = await this.api('/api/admin/items'); },
+
+        // === STORE ===
+        async saveStore() {
+          this.storeBusy = true; this.storeSaved = false;
+          try {
+            this.store = await this.api('/api/admin/store', { method: 'PUT', body: JSON.stringify(this.store) });
+            this.storeSaved = true;
+            setTimeout(() => this.storeSaved = false, 2500);
+            this.showToast('Store updated');
+          } catch (e) { this.showToast(e.message); }
+          finally { this.storeBusy = false; }
+        },
+
+        // === CATEGORIES ===
+        openCategoryEditor(row) {
+          this.catEditor = {
+            open: true,
+            mode: row ? 'edit' : 'new',
+            busy: false, error: '',
+            form: row ? { ...row } : emptyCategory(),
+          };
+        },
+        async saveCategory() {
+          this.catEditor.error = '';
+          this.catEditor.busy = true;
+          try {
+            const body = JSON.stringify(this.catEditor.form);
+            if (this.catEditor.mode === 'new') {
+              await this.api('/api/admin/categories', { method: 'POST', body });
+            } else {
+              await this.api('/api/admin/categories/' + this.catEditor.form.id, { method: 'PUT', body });
+            }
+            await this.loadCategories();
+            this.catEditor.open = false;
+            this.showToast('Category saved');
+          } catch (e) { this.catEditor.error = e.message; }
+          finally { this.catEditor.busy = false; }
+        },
+        async deleteCategory(c) {
+          const count = this.countItemsForCategory(c.id);
+          const extra = count > 0 ? ` This will also delete ${count} item(s).` : '';
+          if (!confirm(`Delete "${c.name}"?${extra}`)) return;
+          try {
+            await this.api('/api/admin/categories/' + c.id, { method: 'DELETE' });
+            await this.loadCategories();
+            await this.loadItems();
+            this.showToast('Category deleted');
+          } catch (e) { this.showToast(e.message); }
+        },
+        countItemsForCategory(id) { return this.items.filter(i => i.category_id === id).length; },
+
+        // === ITEMS ===
+        get filteredItems() {
+          let out = this.items;
+          if (this.itemsFilter !== 'all') out = out.filter(i => i.section === this.itemsFilter);
+          const q = this.itemsSearch.trim().toLowerCase();
+          if (q) out = out.filter(i =>
+            (i.name || '').toLowerCase().includes(q) ||
+            (i.brand || '').toLowerCase().includes(q) ||
+            (i.category_name || '').toLowerCase().includes(q)
+          );
+          return out;
+        },
+
+        openItemEditor(row) {
+          const form = row ? {
+            ...row,
+            weight_options: row.weight_options ? JSON.stringify(row.weight_options, null, 2) : '',
+          } : emptyItem();
+          this.itemEditor = { open: true, mode: row ? 'edit' : 'new', busy: false, error: '', form };
+        },
+
+        onCategoryChange() {
+          // Clear non-applicable fields when switching section via category.
+          const sec = this.currentSection();
+          if (sec === 'fruits') {
+            this.itemEditor.form.brand = '';
+            this.itemEditor.form.dosage = '';
+            this.itemEditor.form.form = '';
+            this.itemEditor.form.pack_size = '';
+            this.itemEditor.form.requires_prescription = false;
+          } else if (sec === 'medicines') {
+            this.itemEditor.form.unit = '';
+            this.itemEditor.form.weight_options = '';
+            this.itemEditor.form.is_organic = false;
+            this.itemEditor.form.origin = '';
+            this.itemEditor.form.is_seasonal = false;
+          }
+        },
+
+        currentSection() {
+          const c = this.categories.find(c => c.id === this.itemEditor.form.category_id);
+          return c ? c.section : '';
+        },
+
+        async saveItem() {
+          this.itemEditor.error = '';
+          this.itemEditor.busy = true;
+          try {
+            const f = { ...this.itemEditor.form };
+            if (typeof f.weight_options === 'string' && f.weight_options.trim()) {
+              try { f.weight_options = JSON.parse(f.weight_options); }
+              catch { throw new Error('weight_options must be valid JSON'); }
+            } else {
+              f.weight_options = null;
+            }
+            const body = JSON.stringify(f);
+            if (this.itemEditor.mode === 'new') {
+              await this.api('/api/admin/items', { method: 'POST', body });
+            } else {
+              await this.api('/api/admin/items/' + f.id, { method: 'PUT', body });
+            }
+            await this.loadItems();
+            this.itemEditor.open = false;
+            this.showToast('Item saved');
+          } catch (e) { this.itemEditor.error = e.message; }
+          finally { this.itemEditor.busy = false; }
+        },
+
+        async deleteItem(i) {
+          if (!confirm(`Delete "${i.name}"?`)) return;
+          try {
+            await this.api('/api/admin/items/' + i.id, { method: 'DELETE' });
+            await this.loadItems();
+            this.showToast('Item deleted');
+          } catch (e) { this.showToast(e.message); }
+        },
+
+        unitLabel(u) {
+          return u === 'per_kg' ? 'per kg' : u === 'per_dozen' ? 'per dozen' : u === 'per_piece' ? 'per piece' : '';
+        },
+
+        showToast(text) {
+          this.toast = text;
+          clearTimeout(this._toastTimer);
+          this._toastTimer = setTimeout(() => this.toast = '', 2400);
+        },
+      };
+    }
+
+    function emptyCategory() {
+      return { id: null, name: '', section: 'fruits', sort: 0, is_active: true };
+    }
+
+    function emptyItem() {
+      return {
+        id: null, category_id: null, section: '',
+        name: '', description: '', price: 0, image: '', sort: 0,
+        is_active: true, is_featured: false, in_stock: true,
+        unit: '', weight_options: '', is_organic: false, origin: '', is_seasonal: false,
+        brand: '', dosage: '', form: '', pack_size: '', requires_prescription: false,
+      };
+    }
+  </script>
+</body>
+</html>

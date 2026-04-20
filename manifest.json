@@ -1,11 +1,11 @@
 {
-  "name": "Mast Malvani — Digital Menu",
-  "short_name": "Mast Malvani",
-  "description": "Authentic Malvani Cuisine — Browse our menu and order via WhatsApp",
+  "name": "GreenLeaf Mart — Fruits & Medicines",
+  "short_name": "GreenLeaf Mart",
+  "description": "Fresh fruits and trusted medicines, delivered. Browse, build your order, checkout via WhatsApp.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0b",
-  "theme_color": "#0a0a0b",
+  "background_color": "#f8fafc",
+  "theme_color": "#16a34a",
   "icons": [
     {
       "src": "assets/images/icon-192.png",

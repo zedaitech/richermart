@@ -1,197 +1,366 @@
 {
-  "restaurant": {
-    "name": "Mast Malvani",
-    "tagline": "Authentic Malvani Cuisine Since 1998",
+  "store": {
+    "name": "GreenLeaf Mart",
+    "tagline": "Fresh fruits & trusted medicines, delivered",
     "phone": "919380341684",
     "logo": "assets/images/logo.svg",
-    "google_maps_url": "https://maps.google.com/?q=Mast+Malvani+Restaurant",
-    "rating": "4.5",
-    "rating_count": "1.2K+ ratings",
-    "status": "Open Now"
+    "google_maps_url": "https://maps.google.com/?q=GreenLeaf+Mart",
+    "status": "Open",
+    "drug_license_no": "MH-AU-2024-05123",
+    "fssai_license_no": "11522998000437",
+    "pharmacist_name": "Dr. R. Kulkarni, B.Pharm",
+    "gstin": "27ABCDE1234F1Z5"
   },
   "categories": [
     {
-      "name": "Starters",
+      "name": "Seasonal Fruits",
+      "section": "fruits",
+      "sort": 1,
       "items": [
         {
-          "name": "Kolhapuri Misal",
-          "description": "Spicy sprouted moth beans curry topped with farsan, onions and lemon",
-          "price": 150,
-          "is_veg": true,
-          "is_bestseller": true,
-          "image": "https://www.themealdb.com/images/media/meals/sywrsu1511463066.jpg"
+          "name": "Alphonso Mango",
+          "description": "Premium Ratnagiri alphonso, hand-picked at peak ripeness",
+          "price": 450,
+          "image": "https://images.unsplash.com/photo-1553279768-865429fa0078?w=800&q=80",
+          "section": "fruits",
+          "is_featured": true,
+          "in_stock": true,
+          "unit": "per_dozen",
+          "weight_options": [
+            { "label": "6 pc", "grams": 0, "price": 240 },
+            { "label": "12 pc", "grams": 0, "price": 450 }
+          ],
+          "is_organic": false,
+          "origin": "Ratnagiri, Maharashtra",
+          "is_seasonal": true
         },
         {
-          "name": "Surmai Fry",
-          "description": "Crispy pan-fried kingfish marinated in Malvani spices and rava coated",
-          "price": 320,
-          "is_veg": false,
-          "is_bestseller": true,
-          "image": "https://www.themealdb.com/images/media/meals/uwxusv1487344500.jpg"
-        },
-        {
-          "name": "Bombil Fry",
-          "description": "Bombay duck coated in rava and shallow fried until golden crisp",
-          "price": 280,
-          "is_veg": false,
-          "is_bestseller": false,
-          "image": "https://www.themealdb.com/images/media/meals/1520084413.jpg"
-        },
-        {
-          "name": "Kanda Bhaji",
-          "description": "Crispy onion fritters served with green chutney and fried chillies",
-          "price": 120,
-          "is_veg": true,
-          "is_bestseller": false,
-          "image": "https://www.themealdb.com/images/media/meals/a15wsa1614349126.jpg"
-        }
-      ]
-    },
-    {
-      "name": "Main Course - Veg",
-      "items": [
-        {
-          "name": "Bharli Vangi",
-          "description": "Stuffed baby eggplants in a rich peanut and coconut gravy",
-          "price": 220,
-          "is_veg": true,
-          "is_bestseller": false,
-          "image": "https://www.themealdb.com/images/media/meals/urtpqw1487341253.jpg"
-        },
-        {
-          "name": "Malvani Veg Curry",
-          "description": "Mixed vegetables in spicy Malvani coconut masala with curry leaves",
-          "price": 200,
-          "is_veg": true,
-          "is_bestseller": true,
-          "image": "https://www.themealdb.com/images/media/meals/xxpqsy1511452222.jpg"
-        },
-        {
-          "name": "Amti Dal",
-          "description": "Traditional Maharashtrian toor dal tempered with kokum and jaggery",
-          "price": 160,
-          "is_veg": true,
-          "is_bestseller": false,
-          "image": "https://www.themealdb.com/images/media/meals/wuxrtu1483564410.jpg"
-        },
-        {
-          "name": "Zunka Bhakar",
-          "description": "Spiced besan preparation served with jowar bhakri and pickle",
-          "price": 140,
-          "is_veg": true,
-          "is_bestseller": false,
-          "image": "https://www.themealdb.com/images/media/meals/hqaejl1695738653.jpg"
-        }
-      ]
-    },
-    {
-      "name": "Main Course - Non Veg",
-      "items": [
-        {
-          "name": "Malvani Chicken Curry",
-          "description": "Tender chicken pieces in aromatic Malvani coconut gravy with fresh spices",
-          "price": 320,
-          "is_veg": false,
-          "is_bestseller": true,
-          "image": "https://www.themealdb.com/images/media/meals/wyxwsp1486979827.jpg"
-        },
-        {
-          "name": "Kombdi Vade",
-          "description": "Spicy chicken curry served with deep-fried crispy vade bread",
-          "price": 350,
-          "is_veg": false,
-          "is_bestseller": true,
-          "image": "https://www.themealdb.com/images/media/meals/yxsurp1511304301.jpg"
-        },
-        {
-          "name": "Surmai Curry",
-          "description": "Kingfish pieces cooked in tangy red Malvani gravy with kokum",
-          "price": 380,
-          "is_veg": false,
-          "is_bestseller": false,
-          "image": "https://www.themealdb.com/images/media/meals/vptqpw1511798500.jpg"
-        },
-        {
-          "name": "Mutton Sukka",
-          "description": "Dry roasted mutton with freshly ground spices, coconut and curry leaves",
-          "price": 400,
-          "is_veg": false,
-          "is_bestseller": false,
-          "image": "https://www.themealdb.com/images/media/meals/vvstvq1487342592.jpg"
-        }
-      ]
-    },
-    {
-      "name": "Rice & Breads",
-      "items": [
-        {
-          "name": "Steamed Rice",
-          "description": "Plain steamed basmati rice",
-          "price": 80,
-          "is_veg": true,
-          "is_bestseller": false,
-          "image": "https://www.themealdb.com/images/media/meals/kw92t41604181871.jpg"
-        },
-        {
-          "name": "Bhakri",
-          "description": "Traditional jowar or nachni flatbread, hand-pressed",
-          "price": 40,
-          "is_veg": true,
-          "is_bestseller": false,
-          "image": ""
-        },
-        {
-          "name": "Chapati",
-          "description": "Soft whole wheat flatbread (2 pcs)",
-          "price": 40,
-          "is_veg": true,
-          "is_bestseller": false,
-          "image": ""
-        },
-        {
-          "name": "Sol Kadhi Rice",
-          "description": "Steamed rice served with refreshing kokum coconut curry",
-          "price": 120,
-          "is_veg": true,
-          "is_bestseller": false,
-          "image": "https://www.themealdb.com/images/media/meals/xrttsx1487339558.jpg"
-        }
-      ]
-    },
-    {
-      "name": "Beverages & Desserts",
-      "items": [
-        {
-          "name": "Sol Kadhi",
-          "description": "Refreshing kokum and coconut milk drink, chilled",
+          "name": "Watermelon",
+          "description": "Crisp, juicy red-flesh watermelon, naturally sweet",
           "price": 60,
-          "is_veg": true,
-          "is_bestseller": false,
-          "image": ""
+          "image": "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&q=80",
+          "section": "fruits",
+          "is_featured": false,
+          "in_stock": true,
+          "unit": "per_kg",
+          "weight_options": [
+            { "label": "1 kg", "grams": 1000, "price": 60 },
+            { "label": "2 kg", "grams": 2000, "price": 115 },
+            { "label": "whole", "grams": 4000, "price": 220 }
+          ],
+          "is_organic": false,
+          "origin": "Nashik, Maharashtra",
+          "is_seasonal": true
         },
         {
-          "name": "Masala Taak",
-          "description": "Spiced buttermilk with curry leaves, ginger and rock salt",
+          "name": "Strawberries",
+          "description": "Fresh Mahabaleshwar strawberries, punnet-packed",
+          "price": 180,
+          "image": "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=800&q=80",
+          "section": "fruits",
+          "is_featured": true,
+          "in_stock": true,
+          "unit": "per_piece",
+          "weight_options": [
+            { "label": "250g box", "grams": 250, "price": 180 },
+            { "label": "500g box", "grams": 500, "price": 340 }
+          ],
+          "is_organic": true,
+          "origin": "Mahabaleshwar",
+          "is_seasonal": true
+        },
+        {
+          "name": "Litchi",
+          "description": "Muzaffarpur litchi, fragrant and sweet, in-season only",
+          "price": 280,
+          "image": "https://images.unsplash.com/photo-1629828874514-31e965fc6bcb?w=800&q=80",
+          "section": "fruits",
+          "is_featured": false,
+          "in_stock": false,
+          "unit": "per_kg",
+          "weight_options": [
+            { "label": "500g", "grams": 500, "price": 150 },
+            { "label": "1 kg", "grams": 1000, "price": 280 }
+          ],
+          "is_organic": false,
+          "origin": "Muzaffarpur, Bihar",
+          "is_seasonal": true
+        }
+      ]
+    },
+    {
+      "name": "Everyday Fruits",
+      "section": "fruits",
+      "sort": 2,
+      "items": [
+        {
+          "name": "Shimla Apple",
+          "description": "Crunchy red-delicious apples from Himachal orchards",
+          "price": 220,
+          "image": "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=800&q=80",
+          "section": "fruits",
+          "is_featured": true,
+          "in_stock": true,
+          "unit": "per_kg",
+          "weight_options": [
+            { "label": "500g", "grams": 500, "price": 120 },
+            { "label": "1 kg", "grams": 1000, "price": 220 }
+          ],
+          "is_organic": false,
+          "origin": "Shimla, HP",
+          "is_seasonal": false
+        },
+        {
+          "name": "Robusta Banana",
+          "description": "Everyday banana, ripe and ready to eat",
           "price": 50,
-          "is_veg": true,
-          "is_bestseller": false,
-          "image": ""
+          "image": "https://images.unsplash.com/photo-1603833665858-e61d17a86224?w=800&q=80",
+          "section": "fruits",
+          "is_featured": false,
+          "in_stock": true,
+          "unit": "per_dozen",
+          "weight_options": [
+            { "label": "6 pc", "grams": 0, "price": 28 },
+            { "label": "12 pc", "grams": 0, "price": 50 }
+          ],
+          "is_organic": false,
+          "origin": "Local",
+          "is_seasonal": false
         },
         {
-          "name": "Modak",
-          "description": "Sweet steamed rice flour dumplings with coconut jaggery filling",
-          "price": 100,
-          "is_veg": true,
-          "is_bestseller": true,
-          "image": ""
+          "name": "Pomegranate",
+          "description": "Deep red arils, bursting with sweetness",
+          "price": 200,
+          "image": "https://images.unsplash.com/photo-1541344999736-83eca272f6fc?w=800&q=80",
+          "section": "fruits",
+          "is_featured": false,
+          "in_stock": true,
+          "unit": "per_kg",
+          "weight_options": [
+            { "label": "500g", "grams": 500, "price": 110 },
+            { "label": "1 kg", "grams": 1000, "price": 200 }
+          ],
+          "is_organic": true,
+          "origin": "Solapur, Maharashtra",
+          "is_seasonal": false
+        }
+      ]
+    },
+    {
+      "name": "Exotic & Imported",
+      "section": "fruits",
+      "sort": 3,
+      "items": [
+        {
+          "name": "Kiwi",
+          "description": "Tangy-sweet green kiwi, imported from New Zealand",
+          "price": 60,
+          "image": "https://images.unsplash.com/photo-1585059895524-72359e06133a?w=800&q=80",
+          "section": "fruits",
+          "is_featured": false,
+          "in_stock": true,
+          "unit": "per_piece",
+          "weight_options": [
+            { "label": "1 pc", "grams": 90, "price": 60 },
+            { "label": "4 pc", "grams": 360, "price": 220 }
+          ],
+          "is_organic": false,
+          "origin": "New Zealand",
+          "is_seasonal": false
         },
         {
-          "name": "Puran Poli",
-          "description": "Sweet flatbread stuffed with chana dal and jaggery, served with ghee",
-          "price": 80,
-          "is_veg": true,
-          "is_bestseller": false,
-          "image": ""
+          "name": "Dragon Fruit",
+          "description": "Vibrant pink-fleshed dragon fruit, mildly sweet",
+          "price": 120,
+          "image": "https://images.unsplash.com/photo-1527325678964-54921661f888?w=800&q=80",
+          "section": "fruits",
+          "is_featured": true,
+          "in_stock": true,
+          "unit": "per_piece",
+          "weight_options": [
+            { "label": "1 pc", "grams": 300, "price": 120 },
+            { "label": "2 pc", "grams": 600, "price": 220 }
+          ],
+          "is_organic": false,
+          "origin": "Vietnam",
+          "is_seasonal": false
+        },
+        {
+          "name": "Blueberries",
+          "description": "Premium imported blueberries, antioxidant-rich",
+          "price": 420,
+          "image": "https://images.unsplash.com/photo-1498557850523-fd3d118b962e?w=800&q=80",
+          "section": "fruits",
+          "is_featured": false,
+          "in_stock": true,
+          "unit": "per_piece",
+          "weight_options": [
+            { "label": "125g punnet", "grams": 125, "price": 420 }
+          ],
+          "is_organic": true,
+          "origin": "USA",
+          "is_seasonal": false
+        }
+      ]
+    },
+    {
+      "name": "Pain & Fever",
+      "section": "medicines",
+      "sort": 10,
+      "items": [
+        {
+          "name": "Paracetamol 500",
+          "description": "Fever and mild pain relief. Adult dose as directed by physician.",
+          "price": 25,
+          "image": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&q=80",
+          "section": "medicines",
+          "is_featured": true,
+          "in_stock": true,
+          "brand": "Crocin",
+          "dosage": "500 mg",
+          "form": "tablet",
+          "pack_size": "Strip of 15",
+          "requires_prescription": false
+        },
+        {
+          "name": "Combiflam",
+          "description": "Ibuprofen + Paracetamol for moderate pain and inflammation",
+          "price": 55,
+          "image": "https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=800&q=80",
+          "section": "medicines",
+          "is_featured": false,
+          "in_stock": true,
+          "brand": "Sanofi",
+          "dosage": "400 + 325 mg",
+          "form": "tablet",
+          "pack_size": "Strip of 20",
+          "requires_prescription": false
+        },
+        {
+          "name": "Diclofenac 50",
+          "description": "NSAID for arthritis and post-operative pain. Prescription only.",
+          "price": 75,
+          "image": "https://images.unsplash.com/photo-1550572017-edd951b55104?w=800&q=80",
+          "section": "medicines",
+          "is_featured": false,
+          "in_stock": true,
+          "brand": "Voveran",
+          "dosage": "50 mg",
+          "form": "tablet",
+          "pack_size": "Strip of 10",
+          "requires_prescription": true
+        }
+      ]
+    },
+    {
+      "name": "Cold, Cough & Allergy",
+      "section": "medicines",
+      "sort": 11,
+      "items": [
+        {
+          "name": "Cetirizine 10",
+          "description": "Antihistamine for allergic rhinitis and urticaria",
+          "price": 35,
+          "image": "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=800&q=80",
+          "section": "medicines",
+          "is_featured": true,
+          "in_stock": true,
+          "brand": "Cetzine",
+          "dosage": "10 mg",
+          "form": "tablet",
+          "pack_size": "Strip of 10",
+          "requires_prescription": false
+        },
+        {
+          "name": "Benadryl Cough Syrup",
+          "description": "Soothes dry cough and throat irritation",
+          "price": 145,
+          "image": "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=800&q=80",
+          "section": "medicines",
+          "is_featured": false,
+          "in_stock": true,
+          "brand": "Johnson & Johnson",
+          "dosage": "14 mg / 5 ml",
+          "form": "syrup",
+          "pack_size": "150 ml bottle",
+          "requires_prescription": false
+        },
+        {
+          "name": "Azithromycin 500",
+          "description": "Broad-spectrum antibiotic. Dispensed against valid prescription only.",
+          "price": 135,
+          "image": "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=800&q=80",
+          "section": "medicines",
+          "is_featured": false,
+          "in_stock": true,
+          "brand": "Azithral",
+          "dosage": "500 mg",
+          "form": "tablet",
+          "pack_size": "Strip of 5",
+          "requires_prescription": true
+        }
+      ]
+    },
+    {
+      "name": "Vitamins & First Aid",
+      "section": "medicines",
+      "sort": 12,
+      "items": [
+        {
+          "name": "Vitamin C 1000",
+          "description": "Daily immunity support, chewable orange-flavored tablets",
+          "price": 220,
+          "image": "https://images.unsplash.com/photo-1550572017-37b5d3f3d7bf?w=800&q=80",
+          "section": "medicines",
+          "is_featured": true,
+          "in_stock": true,
+          "brand": "Limcee",
+          "dosage": "1000 mg",
+          "form": "tablet",
+          "pack_size": "Bottle of 60",
+          "requires_prescription": false
+        },
+        {
+          "name": "Calcium + Vitamin D3",
+          "description": "Bone-health supplement for adults",
+          "price": 180,
+          "image": "https://images.unsplash.com/photo-1584308878768-57d3e1e6fca3?w=800&q=80",
+          "section": "medicines",
+          "is_featured": false,
+          "in_stock": true,
+          "brand": "Shelcal",
+          "dosage": "500 mg + 250 IU",
+          "form": "tablet",
+          "pack_size": "Strip of 15",
+          "requires_prescription": false
+        },
+        {
+          "name": "Dettol Antiseptic",
+          "description": "First-aid antiseptic liquid for cuts and abrasions",
+          "price": 95,
+          "image": "https://images.unsplash.com/photo-1585435557343-3b092031a831?w=800&q=80",
+          "section": "medicines",
+          "is_featured": false,
+          "in_stock": true,
+          "brand": "Dettol",
+          "dosage": "",
+          "form": "drops",
+          "pack_size": "100 ml",
+          "requires_prescription": false
+        },
+        {
+          "name": "Volini Pain Gel",
+          "description": "Diclofenac gel for localized muscle and joint pain",
+          "price": 150,
+          "image": "",
+          "section": "medicines",
+          "is_featured": false,
+          "in_stock": true,
+          "brand": "Sun Pharma",
+          "dosage": "1% w/w",
+          "form": "cream",
+          "pack_size": "30 g tube",
+          "requires_prescription": false
         }
       ]
     }

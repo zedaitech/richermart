@@ -1,2 +1,9 @@
 .claude/
 *.docx
+
+# Node / Netlify
+node_modules/
+.netlify/
+.env
+.env.*
+!.env.example

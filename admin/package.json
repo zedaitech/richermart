@@ -1,0 +1,13 @@
+{
+  "name": "digimenu-admin-seed",
+  "private": true,
+  "type": "module",
+  "description": "One-shot seeder that migrates schema and data from menu.json into Neon Postgres.",
+  "scripts": {
+    "seed": "node seed.mjs"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.1",
+    "ws": "^8.20.0"
+  }
+}
