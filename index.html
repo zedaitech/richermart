@@ -4,14 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GreenLeaf Mart — Fruits & Medicines</title>
+  <title>Richer Mart — Fruits & Medicines</title>
   <meta name="description"
     content="Fresh fruits and trusted medicines, delivered. Browse our catalog, build your order, checkout via WhatsApp.">
   <meta name="author" content="Zed Labs">
   <meta name="theme-color" content="#16a34a">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="GreenLeaf Mart — Fruits & Medicines">
+  <meta property="og:title" content="Richer Mart — Fruits & Medicines">
   <meta property="og:description"
     content="Fresh fruits and trusted medicines, delivered. Order via WhatsApp.">
   <meta property="og:type" content="website">
@@ -39,6 +39,9 @@
   <!-- Alpine.js -->
   <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+  <!-- QR code generator (used for UPI payment QR in cart) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 
   <style>
     *,
@@ -1527,14 +1530,120 @@
       border: 1px solid var(--border);
     }
 
+    .footer-address {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--primary-tint);
+      color: var(--primary-ink);
+      margin-bottom: 12px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+    }
+
+    .footer-address svg { flex-shrink: 0; margin-top: 2px; }
+    .footer-address strong { display: block; font-weight: 700; margin-bottom: 2px; font-size: 0.82rem; }
+
     .footer-credit {
       text-align: center;
       margin-top: 14px;
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
     }
 
-    .footer-credit span { color: var(--primary); font-weight: 600; }
+    .footer-credit a {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .footer-credit a:hover { text-decoration: underline; }
+
+    /* ========================================
+       UPI QR (in cart)
+       ======================================== */
+    .upi-block {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      background: var(--surface);
+      border: 1px solid var(--border-strong);
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .upi-qr-wrap {
+      width: 108px;
+      height: 108px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      border-radius: var(--radius-xs);
+      padding: 4px;
+    }
+
+    .upi-qr-wrap img, .upi-qr-wrap canvas { width: 100%; height: 100%; display: block; }
+
+    .upi-info { flex: 1; min-width: 0; }
+
+    .upi-info h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .upi-info p {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      line-height: 1.45;
+    }
+
+    .upi-id-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-top: 8px;
+      padding: 6px 8px;
+      background: var(--surface2);
+      border-radius: var(--radius-xs);
+      font-size: 0.76rem;
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+    }
+
+    .upi-id-row code {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-family: inherit;
+      color: var(--text);
+    }
+
+    .upi-copy-btn {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: var(--radius-xs);
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .upi-copy-btn:hover { background: var(--primary-hover); }
+    .upi-copy-btn.ok { background: var(--primary-ink); }
 
     /* Responsive */
     @media (min-width: 520px) {
@@ -1800,8 +1909,20 @@
       </div>
     </main>
 
-    <!-- Footer — compliance -->
+    <!-- Footer — address + compliance -->
     <footer class="site-footer">
+      <div x-show="store.address" class="footer-address">
+        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        <div>
+          <strong>Visit our store</strong>
+          <span x-text="store.address"></span>
+        </div>
+      </div>
+
       <div class="footer-compliance">
         <p x-show="store.drug_license_no"><strong>Drug License No:</strong> <span x-text="store.drug_license_no"></span></p>
         <p x-show="store.fssai_license_no"><strong>FSSAI License No:</strong> <span x-text="store.fssai_license_no"></span></p>
@@ -1813,7 +1934,9 @@
         Information on this site is for reference only and is not a substitute for professional
         medical advice. Consult a qualified physician before starting any medication.
       </p>
-      <p class="footer-credit">Powered by <span>DigiMenu</span></p>
+      <p class="footer-credit">
+        Powered by <a href="https://www.zedai.tech" target="_blank" rel="noopener">ZedAi.Tech</a>
+      </p>
     </footer>
   </div>
 
@@ -2033,6 +2156,32 @@
             <span x-text="checkoutError"></span>
           </div>
         </div>
+
+        <!-- UPI QR — shown only if the admin has configured a UPI ID -->
+        <div x-show="cart.length > 0 && store.upi_id" x-effect="renderUpiQr()" class="upi-block">
+          <div class="upi-qr-wrap" aria-label="UPI payment QR">
+            <img x-show="upiQrUrl" :src="upiQrUrl" alt="Scan to pay via UPI" width="100" height="100">
+            <span x-show="!upiQrUrl" style="font-size:0.7rem;color:var(--text-muted)">Loading...</span>
+          </div>
+          <div class="upi-info">
+            <h4>
+              <span>💳 Pay via UPI</span>
+            </h4>
+            <p>
+              Scan with any UPI app (GPay, PhonePe, Paytm, BHIM) to prepay
+              <strong x-text="' ' + fmtPriceRupee(cartTotal)"></strong>.
+            </p>
+            <div class="upi-id-row">
+              <code x-text="store.upi_id"></code>
+              <button class="upi-copy-btn" :class="upiCopied && 'ok'" @click="copyUpiId()"
+                x-text="upiCopied ? 'Copied' : 'Copy'"></button>
+            </div>
+            <p style="font-size:0.72rem;color:var(--text-muted);margin-top:6px">
+              Payment is optional — you can also pay on delivery/pickup.
+              After paying, tap "Place Order" to confirm via WhatsApp.
+            </p>
+          </div>
+        </div>
       </div>
 
       <div x-show="cart.length > 0" class="cart-footer">
@@ -2071,6 +2220,10 @@
         addingKey: '', addedKey: '',
         toast: false, toastText: '', toastLeaving: false, toastTimer: null,
         _observer: null,
+
+        // UPI QR
+        upiQrUrl: '', upiCopied: false,
+        _upiKey: '',                 // last-rendered "amount|upi_id" to debounce reflows
 
         filterOptions: {
           fruits: [
@@ -2396,6 +2549,50 @@
           }
         },
 
+        // UPI QR — regenerates when the total or UPI id changes.
+        renderUpiQr() {
+          const amount = this.cartTotal;
+          const upi = this.store.upi_id;
+          const key = `${upi}|${amount}`;
+          if (!upi || amount <= 0) { this.upiQrUrl = ''; this._upiKey = ''; return; }
+          if (key === this._upiKey) return;
+          this._upiKey = key;
+
+          if (typeof window === 'undefined' || typeof window.QRCode === 'undefined') {
+            // Library still loading — try again once it's ready.
+            setTimeout(() => { this._upiKey = ''; this.renderUpiQr(); }, 250);
+            return;
+          }
+
+          const name = encodeURIComponent(this.store.upi_merchant_name || this.store.name || 'Store');
+          const note = encodeURIComponent(`${this.store.name || 'Store'} order`);
+          const link = `upi://pay?pa=${encodeURIComponent(upi)}&pn=${name}&am=${amount}&cu=INR&tn=${note}`;
+
+          window.QRCode.toDataURL(link, {
+            width: 220,
+            margin: 1,
+            color: { dark: '#0f172a', light: '#ffffff' },
+          }).then(url => { this.upiQrUrl = url; })
+            .catch(err => { console.warn('QR render failed:', err); this.upiQrUrl = ''; });
+        },
+
+        async copyUpiId() {
+          if (!this.store.upi_id) return;
+          try {
+            await navigator.clipboard.writeText(this.store.upi_id);
+            this.upiCopied = true;
+            setTimeout(() => this.upiCopied = false, 1600);
+          } catch {
+            // Fallback for browsers without clipboard API
+            const ta = document.createElement('textarea');
+            ta.value = this.store.upi_id;
+            document.body.appendChild(ta);
+            ta.select();
+            try { document.execCommand('copy'); this.upiCopied = true; setTimeout(() => this.upiCopied = false, 1600); } catch {}
+            document.body.removeChild(ta);
+          }
+        },
+
         // Toast
         showToast(text) {
           clearTimeout(this.toastTimer);
@@ -2469,6 +2666,10 @@
           }
 
           msg += `${line}\n\u{1F4B0} *Grand Total: ${this.fmtPriceRupee(this.cartTotal)}*\n`;
+
+          if (this.store.upi_id) {
+            msg += `\n\u{1F4B3} Pay via UPI: ${this.store.upi_id}\n`;
+          }
 
           window.open(`https://wa.me/${this.store.phone}?text=${encodeURIComponent(msg)}`, '_blank');
         },

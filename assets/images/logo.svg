@@ -1,13 +1,63 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
   <defs>
-    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="rm-ring" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#16a34a"/>
-      <stop offset="100%" stop-color="#22c55e"/>
+      <stop offset="60%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#2563eb"/>
     </linearGradient>
+    <linearGradient id="rm-ink" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e40af"/>
+    </linearGradient>
+    <linearGradient id="rm-leaf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+    <filter id="rm-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="1.2" in="SourceAlpha"/>
+      <feOffset dy="1"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.25"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
-  <circle cx="60" cy="60" r="58" fill="#ffffff" stroke="url(#g)" stroke-width="3"/>
-  <path d="M60 32c-5 10-14 14-14 26a14 14 0 0 0 28 0c0-12-9-16-14-26z" fill="url(#g)"/>
-  <path d="M60 36c2 8 8 11 8 21" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
-  <text x="60" y="88" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#0f172a" letter-spacing="1.2">GREENLEAF</text>
-  <text x="60" y="100" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="6" fill="#64748b" letter-spacing="2">FRUITS &amp; MEDS</text>
+
+  <!-- Gradient ring -->
+  <circle cx="60" cy="60" r="56" fill="url(#rm-ring)"/>
+  <!-- Inner face -->
+  <circle cx="60" cy="60" r="49" fill="#ffffff"/>
+
+  <!-- Monogram R -->
+  <g filter="url(#rm-shadow)">
+    <path d="M 42 84
+             L 42 36
+             L 64 36
+             C 74 36 80 42 80 50
+             C 80 58 75 62 69 64
+             L 82 84
+             L 70 84
+             L 59 66
+             L 52 66
+             L 52 84
+             Z
+             M 52 58
+             L 63 58
+             C 68 58 70 55 70 51
+             C 70 47 68 44 63 44
+             L 52 44
+             Z"
+          fill="url(#rm-ink)"/>
+  </g>
+
+  <!-- Leaf sprout (fruits signal) -->
+  <g transform="translate(78 22) rotate(-22)">
+    <path d="M 0 6 C 4 -2 16 -2 22 2 C 20 10 10 14 2 12 C 0 10 -1 8 0 6 Z" fill="url(#rm-leaf)"/>
+    <path d="M 2 8 C 8 6 14 4 20 2" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.85"/>
+  </g>
+
+  <!-- Medical plus (medicines signal) -->
+  <g transform="translate(88 78)">
+    <circle r="9" fill="#2563eb"/>
+    <rect x="-5" y="-1.2" width="10" height="2.4" fill="#ffffff" rx="0.8"/>
+    <rect x="-1.2" y="-5" width="2.4" height="10" fill="#ffffff" rx="0.8"/>
+  </g>
 </svg>

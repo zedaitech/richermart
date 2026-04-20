@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin · GreenLeaf Mart</title>
+  <title>Admin · Richer Mart</title>
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#16a34a">
 
@@ -76,8 +76,8 @@
     }
     .topbar-left { display: flex; align-items: center; gap: 10px; }
     .topbar-logo {
-      width: 32px; height: 32px; border-radius: 8px; background: var(--primary-tint); color: var(--primary);
-      display: grid; place-items: center; font-weight: 800;
+      width: 36px; height: 36px; border-radius: 8px; background: var(--surface); object-fit: contain;
+      box-shadow: var(--shadow-sm);
     }
     .topbar-title { font-weight: 700; letter-spacing: -0.01em; font-size: 0.95rem; }
     .topbar-sub { color: var(--text-muted); font-size: 0.74rem; }
@@ -258,9 +258,9 @@
   <div x-show="token" x-cloak class="app">
     <header class="topbar">
       <div class="topbar-left">
-        <div class="topbar-logo">G</div>
+        <img src="/assets/images/logo.svg" alt="Richer Mart" class="topbar-logo" width="36" height="36">
         <div>
-          <div class="topbar-title">GreenLeaf Mart Admin</div>
+          <div class="topbar-title">Richer Mart Admin</div>
           <div class="topbar-sub">Catalog &amp; store management</div>
         </div>
       </div>
@@ -322,6 +322,25 @@
                 <option value="Open">Open</option>
                 <option value="Closed">Closed</option>
               </select>
+            </div>
+          </div>
+
+          <div class="form-row" style="margin-top:12px">
+            <label class="form-label">Store address</label>
+            <textarea class="form-input" x-model="store.address" rows="2" placeholder="Full street address shown in the website footer"></textarea>
+            <p class="form-help">Shown on the storefront footer. Leave blank to hide.</p>
+          </div>
+
+          <h3 style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent-blue);margin:20px 0 10px">Payment (UPI)</h3>
+          <div class="form-grid-2">
+            <div class="form-row">
+              <label class="form-label">UPI ID</label>
+              <input class="form-input" x-model="store.upi_id" placeholder="e.g. richermart@okaxis">
+              <p class="form-help">Leave blank to hide the QR on the storefront.</p>
+            </div>
+            <div class="form-row">
+              <label class="form-label">UPI merchant name</label>
+              <input class="form-input" x-model="store.upi_merchant_name" placeholder="Name shown to the buyer in their UPI app">
             </div>
           </div>
 

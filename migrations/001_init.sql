@@ -9,10 +9,13 @@ CREATE TABLE IF NOT EXISTS store (
   logo                  TEXT NOT NULL DEFAULT '',
   google_maps_url       TEXT NOT NULL DEFAULT '',
   status                TEXT NOT NULL DEFAULT 'Open',
+  address               TEXT NOT NULL DEFAULT '',
   drug_license_no       TEXT NOT NULL DEFAULT '',
   fssai_license_no      TEXT NOT NULL DEFAULT '',
   pharmacist_name       TEXT NOT NULL DEFAULT '',
   gstin                 TEXT NOT NULL DEFAULT '',
+  upi_id                TEXT NOT NULL DEFAULT '',
+  upi_merchant_name     TEXT NOT NULL DEFAULT '',
   CONSTRAINT store_singleton CHECK (id = 1)
 );
 

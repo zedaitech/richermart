@@ -1,15 +1,18 @@
 {
   "store": {
-    "name": "GreenLeaf Mart",
+    "name": "Richer Mart",
     "tagline": "Fresh fruits & trusted medicines, delivered",
     "phone": "919380341684",
     "logo": "assets/images/logo.svg",
-    "google_maps_url": "https://maps.google.com/?q=GreenLeaf+Mart",
+    "google_maps_url": "https://maps.google.com/?q=Richer+Mart",
     "status": "Open",
+    "address": "Shop 12, Market Road, Andheri West, Mumbai 400058",
     "drug_license_no": "MH-AU-2024-05123",
     "fssai_license_no": "11522998000437",
     "pharmacist_name": "Dr. R. Kulkarni, B.Pharm",
-    "gstin": "27ABCDE1234F1Z5"
+    "gstin": "27ABCDE1234F1Z5",
+    "upi_id": "richermart@okaxis",
+    "upi_merchant_name": "Richer Mart"
   },
   "categories": [
     {

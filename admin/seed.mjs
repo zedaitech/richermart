@@ -6,7 +6,7 @@
 //   - Schema is created with IF NOT EXISTS guards (see ../migrations/001_init.sql).
 //   - Data is only inserted when the items table is empty (pass --force to wipe & re-seed).
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Pool, neonConfig } from '@neondatabase/serverless';
@@ -34,11 +34,14 @@ async function q(text, params = []) {
 }
 
 async function runMigration() {
-  const file = resolve(ROOT, 'migrations', '001_init.sql');
-  const raw = readFileSync(file, 'utf8');
-  // Send the whole migration as one batch — the Pool driver accepts multi-statement SQL.
-  await pool.query(raw);
-  console.log('✓ Schema ensured');
+  const dir = resolve(ROOT, 'migrations');
+  const files = readdirSync(dir).filter(f => f.endsWith('.sql')).sort();
+  for (const file of files) {
+    const raw = readFileSync(resolve(dir, file), 'utf8');
+    // Pool.query accepts multi-statement SQL; each file is one atomic batch.
+    await pool.query(raw);
+    console.log(`✓ Applied migration: ${file}`);
+  }
 }
 
 async function seedFromMenuJson() {
@@ -61,15 +64,17 @@ async function seedFromMenuJson() {
   await q(
     `UPDATE store SET
        name = $1, tagline = $2, phone = $3, logo = $4,
-       google_maps_url = $5, status = $6,
-       drug_license_no = $7, fssai_license_no = $8,
-       pharmacist_name = $9, gstin = $10
+       google_maps_url = $5, status = $6, address = $7,
+       drug_license_no = $8, fssai_license_no = $9,
+       pharmacist_name = $10, gstin = $11,
+       upi_id = $12, upi_merchant_name = $13
      WHERE id = 1`,
     [
       str(s.name), str(s.tagline), str(s.phone), str(s.logo),
-      str(s.google_maps_url), str(s.status, 'Open'),
+      str(s.google_maps_url), str(s.status, 'Open'), str(s.address),
       str(s.drug_license_no), str(s.fssai_license_no),
       str(s.pharmacist_name), str(s.gstin),
+      str(s.upi_id), str(s.upi_merchant_name),
     ],
   );
   console.log(`✓ Seeded store: ${s.name}`);

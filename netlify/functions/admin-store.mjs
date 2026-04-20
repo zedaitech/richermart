@@ -25,10 +25,13 @@ export async function handler(event) {
           logo = ${s(b.logo)},
           google_maps_url = ${s(b.google_maps_url)},
           status = ${s(b.status, 'Open')},
+          address = ${s(b.address)},
           drug_license_no = ${s(b.drug_license_no)},
           fssai_license_no = ${s(b.fssai_license_no)},
           pharmacist_name = ${s(b.pharmacist_name)},
-          gstin = ${s(b.gstin)}
+          gstin = ${s(b.gstin)},
+          upi_id = ${s(b.upi_id)},
+          upi_merchant_name = ${s(b.upi_merchant_name)}
         WHERE id = 1
         RETURNING *`;
       return json(200, rows[0]);
