@@ -1571,9 +1571,34 @@
       background: #fff;
       border-radius: var(--radius-xs);
       padding: 4px;
+      position: relative;
+      cursor: zoom-in;
+      border: 1px solid var(--border);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .upi-qr-wrap:hover {
+      transform: scale(1.03);
+      border-color: var(--primary);
+      box-shadow: 0 6px 18px rgba(22, 163, 74, 0.18);
     }
 
     .upi-qr-wrap img, .upi-qr-wrap canvas { width: 100%; height: 100%; display: block; }
+
+    .upi-qr-zoom-hint {
+      position: absolute;
+      right: -4px;
+      bottom: -4px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 2px 6px rgba(22, 163, 74, 0.3);
+      pointer-events: none;
+    }
 
     .upi-info { flex: 1; min-width: 0; }
 
@@ -1593,6 +1618,139 @@
       line-height: 1.45;
     }
 
+    .upi-tap-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-top: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ========================================
+       UPI QR — ZOOM MODAL
+       ======================================== */
+    .qr-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 70;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .qr-modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .qr-modal-panel {
+      position: relative;
+      width: 100%;
+      max-width: 380px;
+      background: var(--surface);
+      border-radius: 20px;
+      padding: 24px 20px 20px;
+      box-shadow: 0 30px 60px rgba(15, 23, 42, 0.35);
+      text-align: center;
+    }
+
+    .qr-modal-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      min-height: 40px;
+      min-width: 40px;
+    }
+
+    .qr-modal-close:hover { background: var(--surface3); color: var(--text); }
+
+    .qr-modal-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .qr-modal-amount {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      font-variant-numeric: tabular-nums;
+      margin-top: 2px;
+    }
+
+    .qr-modal-image {
+      width: 100%;
+      aspect-ratio: 1;
+      max-width: 320px;
+      margin: 18px auto 14px;
+      padding: 12px;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: inset 0 0 0 1px var(--border);
+    }
+
+    .qr-modal-image img { width: 100%; height: 100%; display: block; object-fit: contain; }
+
+    .qr-modal-help {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 4px;
+    }
+
+    .qr-modal-apps {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    .qr-modal-done {
+      margin-top: 16px;
+      width: 100%;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      font-size: 0.9rem;
+      font-weight: 700;
+      font-family: var(--font-body);
+      cursor: pointer;
+      min-height: 48px;
+      letter-spacing: -0.01em;
+    }
+
+    .qr-modal-done:hover { background: var(--primary-hover); }
+
+    .qr-modal-enter { animation: qrModalIn 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+    .qr-modal-leave { animation: qrModalOut 0.2s ease-in forwards; }
+
+    @keyframes qrModalIn {
+      from { opacity: 0; transform: scale(0.94); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes qrModalOut {
+      from { opacity: 1; }
+      to   { opacity: 0; transform: scale(0.96); }
+    }
 
     /* Responsive */
     @media (min-width: 520px) {
@@ -1922,7 +2080,7 @@
 
   <!-- Cart Drawer -->
   <div x-show="cartOpen" x-cloak class="cart-overlay" role="dialog" aria-modal="true" aria-label="Your cart"
-    @keydown.escape.window="closeCart()">
+    @keydown.escape.window="qrZoomed ? qrZoomed = false : closeCart()">
     <div class="cart-backdrop" @click="closeCart()" x-show="cartOpen" x-transition.opacity.duration.300ms></div>
     <div class="cart-panel" x-show="cartOpen" x-transition:enter="slide-enter" x-transition:leave="slide-leave"
       x-trap.noscroll="cartOpen">
@@ -2108,15 +2266,25 @@
 
         <!-- UPI payment QR — shown only if the admin has uploaded a QR image -->
         <div x-show="cart.length > 0 && store.upi_qr_image" class="upi-block">
-          <div class="upi-qr-wrap" aria-label="UPI payment QR">
+          <button type="button" class="upi-qr-wrap" @click="qrZoomed = true"
+            aria-label="Tap to enlarge UPI payment QR">
             <img :src="store.upi_qr_image" alt="Scan to pay via UPI">
-          </div>
+            <span class="upi-qr-zoom-hint" aria-hidden="true">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6M7 10h6"/>
+              </svg>
+            </span>
+          </button>
           <div class="upi-info">
             <h4><span>💳 Pay via UPI</span></h4>
             <p>
               Scan with any UPI app (GPay, PhonePe, Paytm, BHIM) and pay
               <strong x-text="' ' + fmtPriceRupee(cartTotal)"></strong>.
             </p>
+            <button type="button" class="upi-tap-label" @click="qrZoomed = true"
+              style="background:none;border:none;padding:0;cursor:pointer;font-family:var(--font-body)">
+              Tap QR to enlarge →
+            </button>
             <p style="font-size:0.72rem;color:var(--text-muted);margin-top:6px">
               Payment is optional — you can also pay on delivery or pickup.
               After paying, tap "Place Order" to confirm via WhatsApp.
@@ -2137,6 +2305,30 @@
     </div>
   </div>
 
+  <!-- UPI QR zoom modal — opened by tapping the small QR in the cart -->
+  <div x-show="qrZoomed && store.upi_qr_image" x-cloak class="qr-modal"
+    role="dialog" aria-modal="true" aria-label="UPI payment QR"
+    @keydown.escape.window="qrZoomed = false">
+    <div class="qr-modal-backdrop" @click="qrZoomed = false"
+      x-show="qrZoomed" x-transition.opacity.duration.200ms></div>
+    <div class="qr-modal-panel" x-show="qrZoomed"
+      x-transition:enter="qr-modal-enter" x-transition:leave="qr-modal-leave">
+      <button type="button" class="qr-modal-close" @click="qrZoomed = false" aria-label="Close">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+      <p class="qr-modal-title">Pay via UPI</p>
+      <p class="qr-modal-amount" x-text="fmtPriceRupee(cartTotal)"></p>
+      <div class="qr-modal-image">
+        <img :src="store.upi_qr_image" alt="Scan to pay via UPI">
+      </div>
+      <p class="qr-modal-help">Scan the QR with any UPI app to pay</p>
+      <p class="qr-modal-apps">GPay &middot; PhonePe &middot; Paytm &middot; BHIM &middot; Amazon Pay</p>
+      <button type="button" class="qr-modal-done" @click="qrZoomed = false">I've paid &middot; Close</button>
+    </div>
+  </div>
+
   <!-- Noscript -->
   <noscript>
     <div style="max-width:32rem;margin:2rem auto;padding:1rem;text-align:center;color:#0f172a;font-family:system-ui">
@@ -2152,6 +2344,7 @@
         filter: 'all', search: '', activeCategory: 0, showScrollTop: false,
         selectedWeights: {},           // { itemName: 'label' }
         cart: [], cartOpen: false,
+        qrZoomed: false,
         orderType: '',                 // 'delivery' | 'pickup'
         delivery: { name: '', mobile: '', address: '' },
         pickup: { name: '', mobile: '' },
