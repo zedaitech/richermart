@@ -281,6 +281,94 @@
     }
     .icon-btn:hover { background: var(--surface2); color: var(--text); }
     .icon-btn.danger:hover { background: var(--accent-red-tint); color: var(--accent-red); border-color: rgba(220,38,38,0.3); }
+
+    /* Inline chip row shown under the item name on mobile (hides category column) */
+    .mobile-meta { display: none; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+
+    /* ==========================================================
+       Mobile responsive — admin panel
+       ========================================================== */
+    @media (max-width: 720px) {
+      /* Topbar: stack into two rows so the tab pills sit on their own line */
+      .topbar {
+        flex-wrap: wrap;
+        padding: 8px 10px;
+        gap: 8px;
+      }
+      .topbar-left { gap: 8px; flex: 1; min-width: 0; }
+      .topbar-logo { width: 30px; height: 30px; }
+      .topbar-title { font-size: 0.88rem; }
+      .topbar-sub { display: none; }      /* no room on phones */
+
+      .topbar-right { gap: 2px; }
+      .view-site { padding: 6px 8px; font-size: 0.72rem; }
+      .topbar-right .btn--ghost { padding: 6px 8px; font-size: 0.78rem; }
+
+      .tabs {
+        order: 3;
+        width: 100%;
+        padding: 3px;
+      }
+      .tab {
+        flex: 1;
+        padding: 8px 6px;
+        font-size: 0.78rem;
+        text-align: center;
+      }
+
+      /* Content: tighter vertical rhythm */
+      .content { padding: 14px 12px 80px; }
+
+      .page-title { gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+      .page-title > div { min-width: 0; flex: 1; }
+      .page-title h2 { font-size: 1.05rem; }
+      .page-title p { font-size: 0.76rem; }
+      .page-title .btn { padding: 8px 12px; font-size: 0.78rem; }
+
+      .card { padding: 14px; }
+
+      /* Filter bar: search grows full-width, pills stay tappable */
+      .filter-bar { gap: 6px; }
+      .search-input { min-width: 0; flex: 1; padding: 8px 12px; font-size: 0.86rem; }
+      .section-pill { padding: 6px 10px; }
+
+      /* Tables: drop low-priority columns, tighten spacing */
+      .table { font-size: 0.82rem; }
+      .table th, .table td { padding: 8px 6px; }
+      .thumb, .thumb-placeholder { width: 36px; height: 36px; border-radius: 6px; }
+
+      /* Mark columns that drop on mobile — only keep the essentials */
+      .table .col-category,
+      .table .col-details,
+      .table .col-status,
+      .table .col-items-count { display: none; }
+
+      /* Show inline chips in place of the hidden category column */
+      .mobile-meta { display: flex; }
+
+      /* Shrink action buttons so edit+delete stay side-by-side */
+      .row-actions { gap: 2px; }
+      .icon-btn { width: 30px; height: 30px; }
+
+      /* Modals: edge-to-edge on phones with just a little breathing room */
+      .modal-backdrop { padding: 8px; }
+      .modal { max-height: 95vh; border-radius: 12px; }
+      .modal-head { padding: 12px 14px; }
+      .modal-body { padding: 14px; }
+      .modal-foot { padding: 10px 14px; }
+
+      /* Login card: use full width with smaller padding */
+      .login-wrap { padding: 16px; }
+      .login-card { padding: 22px 18px; }
+    }
+
+    /* Very narrow phones (≤ iPhone SE width) */
+    @media (max-width: 380px) {
+      .topbar-title { font-size: 0.82rem; }
+      .view-site { padding: 5px 7px; font-size: 0.68rem; }
+      .topbar-right .btn--ghost { padding: 5px 7px; font-size: 0.74rem; }
+      .tab { padding: 7px 4px; font-size: 0.74rem; }
+    }
   </style>
 </head>
 
@@ -470,11 +558,11 @@
           <table class="table">
             <thead>
               <tr>
-                <th style="width:60px">Sort</th>
+                <th style="width:60px" class="col-sort">Sort</th>
                 <th>Name</th>
-                <th>Section</th>
-                <th>Status</th>
-                <th>Items</th>
+                <th class="col-category">Section</th>
+                <th class="col-status">Status</th>
+                <th class="col-items-count">Items</th>
                 <th class="right">Actions</th>
               </tr>
             </thead>
@@ -484,11 +572,18 @@
               </template>
               <template x-for="c in categories" :key="c.id">
                 <tr>
-                  <td x-text="c.sort"></td>
-                  <td style="font-weight:600" x-text="c.name"></td>
-                  <td><span class="chip" :class="c.section==='fruits'?'chip--fruits':'chip--medicines'" x-text="c.section"></span></td>
-                  <td><span class="chip" :class="c.is_active?'chip--otc':'chip--off'" x-text="c.is_active?'Active':'Hidden'"></span></td>
-                  <td x-text="countItemsForCategory(c.id)"></td>
+                  <td x-text="c.sort" class="col-sort"></td>
+                  <td style="font-weight:600">
+                    <div x-text="c.name"></div>
+                    <div class="mobile-meta">
+                      <span class="chip" :class="c.section==='fruits'?'chip--fruits':'chip--medicines'" x-text="c.section"></span>
+                      <span class="chip" :class="c.is_active?'chip--otc':'chip--off'" x-text="c.is_active?'Active':'Hidden'"></span>
+                      <span class="chip chip--off" x-text="countItemsForCategory(c.id) + ' items'"></span>
+                    </div>
+                  </td>
+                  <td class="col-category"><span class="chip" :class="c.section==='fruits'?'chip--fruits':'chip--medicines'" x-text="c.section"></span></td>
+                  <td class="col-status"><span class="chip" :class="c.is_active?'chip--otc':'chip--off'" x-text="c.is_active?'Active':'Hidden'"></span></td>
+                  <td x-text="countItemsForCategory(c.id)" class="col-items-count"></td>
                   <td class="right">
                     <div class="row-actions">
                       <button class="icon-btn" @click="openCategoryEditor(c)" title="Edit">&#9998;</button>
@@ -531,10 +626,10 @@
               <tr>
                 <th style="width:60px"></th>
                 <th>Name</th>
-                <th>Category</th>
-                <th>Details</th>
+                <th class="col-category">Category</th>
+                <th class="col-details">Details</th>
                 <th class="right">Price</th>
-                <th>Status</th>
+                <th class="col-status">Status</th>
                 <th class="right">Actions</th>
               </tr>
             </thead>
@@ -551,11 +646,19 @@
                   <td>
                     <div style="font-weight:600" x-text="i.name"></div>
                     <div style="font-size:0.72rem;color:var(--text-muted)" x-text="i.description"></div>
+                    <div class="mobile-meta">
+                      <span class="chip" :class="i.section==='fruits'?'chip--fruits':'chip--medicines'" x-text="i.category_name"></span>
+                      <template x-if="i.section==='fruits' && i.is_organic"><span class="chip chip--fruits">Organic</span></template>
+                      <template x-if="i.section==='fruits' && i.is_seasonal"><span class="chip" style="background:var(--accent-amber-tint);color:#78350f">Seasonal</span></template>
+                      <template x-if="i.section==='medicines' && i.requires_prescription"><span class="chip chip--rx">Rx</span></template>
+                      <template x-if="!i.in_stock"><span class="chip chip--off">Sold out</span></template>
+                      <template x-if="i.in_stock && !i.is_active"><span class="chip chip--off">Hidden</span></template>
+                    </div>
                   </td>
-                  <td>
+                  <td class="col-category">
                     <span class="chip" :class="i.section==='fruits'?'chip--fruits':'chip--medicines'" x-text="i.category_name"></span>
                   </td>
-                  <td style="font-size:0.78rem;color:var(--text-secondary)">
+                  <td class="col-details" style="font-size:0.78rem;color:var(--text-secondary)">
                     <template x-if="i.section==='fruits'">
                       <span>
                         <span x-text="i.origin || ''"></span>
@@ -577,7 +680,7 @@
                     </template>
                   </td>
                   <td class="right" style="font-weight:700;font-variant-numeric:tabular-nums" x-text="'₹' + (i.price || 0).toLocaleString('en-IN')"></td>
-                  <td>
+                  <td class="col-status">
                     <template x-if="i.in_stock && i.is_active"><span class="chip chip--otc">In stock</span></template>
                     <template x-if="i.in_stock && !i.is_active"><span class="chip chip--off">Hidden</span></template>
                     <template x-if="!i.in_stock"><span class="chip chip--off">Sold out</span></template>
