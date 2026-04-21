@@ -1,4 +1,4 @@
-import { getStore } from '@netlify/blobs';
+import { connectLambda, getStore } from '@netlify/blobs';
 import { json, errorResponse } from './_db.mjs';
 
 // Public read of admin-uploaded assets (UPI QR image, etc.)
@@ -7,6 +7,7 @@ import { json, errorResponse } from './_db.mjs';
 export async function handler(event) {
   if (event.httpMethod !== 'GET') return json(405, { error: 'Method not allowed' });
   try {
+    connectLambda(event);
     const id = (event.queryStringParameters && event.queryStringParameters.id) || '';
     if (!/^[a-f0-9]{32}(?:\.[a-z0-9]{1,5})?$/i.test(id)) {
       return json(400, { error: 'Invalid id' });

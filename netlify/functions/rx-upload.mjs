@@ -1,4 +1,4 @@
-import { getStore } from '@netlify/blobs';
+import { connectLambda, getStore } from '@netlify/blobs';
 import crypto from 'node:crypto';
 import { json, errorResponse } from './_db.mjs';
 
@@ -15,6 +15,7 @@ const ALLOWED_TYPES = new Set([
 export async function handler(event) {
   if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' });
   try {
+    connectLambda(event);
     const ct = (event.headers['content-type'] || event.headers['Content-Type'] || '').toLowerCase();
     let bytes, mime, filename;
 
