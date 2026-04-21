@@ -1032,6 +1032,7 @@
       left: 0;
       right: 0;
       max-height: 92vh;
+      max-height: 92dvh;                /* respects mobile browser chrome + keyboard */
       background: var(--surface);
       border-radius: 18px 18px 0 0;
       display: flex;
@@ -1117,6 +1118,7 @@
 
     .cart-body {
       flex: 1;
+      min-height: 0;                    /* allow shrink below content so header + footer stay pinned */
       overflow-y: auto;
       padding: 8px 16px;
     }
