@@ -806,30 +806,10 @@
       background: var(--primary-tint);
     }
 
-    .add-btn--adding {
-      background: var(--primary);
-      color: #fff;
-      pointer-events: none;
-      animation: addPulse 0.4s ease;
-    }
-
-    .add-btn--added {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-      pointer-events: none;
-    }
-
     .add-btn[disabled] {
       opacity: 0.4;
       cursor: not-allowed;
       pointer-events: none;
-    }
-
-    @keyframes addPulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.06); }
-      100% { transform: scale(1); }
     }
 
     .qty-ctrl {
@@ -839,6 +819,12 @@
       border: 1.5px solid var(--primary);
       overflow: hidden;
       background: var(--primary-tint);
+      animation: qtyIn 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes qtyIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to   { opacity: 1; transform: scale(1); }
     }
 
     .qty-btn {
@@ -2007,11 +1993,8 @@
 
                     <template x-if="item.in_stock && !getCartItem(cat.name, item)">
                       <button class="add-btn tap"
-                        :class="addingKey === rowKeyOf(cat.name, item) ? (addedKey === rowKeyOf(cat.name, item) ? 'add-btn--added' : 'add-btn--adding') : ''"
-                        @click="addWithAnim(cat.name, item)"
-                        :aria-label="'Add ' + item.name + ' to cart'"
-                        x-text="addedKey === rowKeyOf(cat.name, item) ? '\u2713' : (addingKey === rowKeyOf(cat.name, item) ? '...' : 'ADD')">
-                      </button>
+                        @click="addItem(cat.name, item)"
+                        :aria-label="'Add ' + item.name + ' to cart'">ADD</button>
                     </template>
 
                     <template x-if="item.in_stock && getCartItem(cat.name, item)">
@@ -2383,7 +2366,6 @@
         prescriptionFile: null, prescriptionFileName: '',
         prescriptionUploadId: null, prescriptionUploadUrl: '', prescriptionUploadFailed: false,
         checkoutError: '',
-        addingKey: '', addedKey: '',
         toast: false, toastText: '', toastLeaving: false, toastTimer: null,
         _observer: null,
 
@@ -2627,16 +2609,12 @@
           return this.cart.find(r => r._key === this.rowKeyOf(catName, item));
         },
 
-        addWithAnim(cat, item) {
+        // Industry-standard instant add — Alpine swaps the ADD button for the
+        // qty-ctrl immediately, which fades in via the qtyIn keyframes.
+        addItem(cat, item) {
           if (!item.in_stock) return;
-          const key = this.rowKeyOf(cat, item);
-          this.addingKey = key;
-          setTimeout(() => {
-            this.addedKey = key;
-            this.addToCart(cat, item);
-            this.showToast(item.name + ' added');
-            setTimeout(() => { this.addingKey = ''; this.addedKey = ''; }, 500);
-          }, 220);
+          this.addToCart(cat, item);
+          this.showToast(item.name + ' added');
         },
 
         addToCart(cat, item) {
