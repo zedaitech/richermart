@@ -19,15 +19,8 @@
   to = "/.netlify/functions/rx-upload"
   status = 200
 
-[[redirects]]
-  from = "/api/rx/*"
-  to = "/.netlify/functions/rx-file?id=:splat"
-  status = 200
-
-[[redirects]]
-  from = "/api/assets/*"
-  to = "/.netlify/functions/asset-file?id=:splat"
-  status = 200
+# /api/rx/:id  and  /api/assets/:id  are served by v2 Functions with their
+# own `export const config = { path: ... }` routing — no redirect needed.
 
 [[redirects]]
   from = "/api/admin/login"
