@@ -819,12 +819,14 @@
       border: 1.5px solid var(--primary);
       overflow: hidden;
       background: var(--primary-tint);
-      animation: qtyIn 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+      /* Subtle scale-in only — no opacity fade, so the first paint shows
+         the control fully visible (no blank frames between swap and animation). */
+      animation: qtyIn 0.12s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     @keyframes qtyIn {
-      from { opacity: 0; transform: scale(0.92); }
-      to   { opacity: 1; transform: scale(1); }
+      from { transform: scale(0.94); }
+      to   { transform: scale(1); }
     }
 
     .qty-btn {
