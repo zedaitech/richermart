@@ -1,33 +1,38 @@
-import { requireDb, json, errorResponse, readJsonBody } from './_db.mjs';
-import { requireAuth } from './_auth.mjs';
+import { requireDb } from './_db.mjs';
+import { verifyToken } from './_auth.mjs';
 
 // GET    /api/admin/items              → list with category info
 // POST   /api/admin/items     { ... }   → create
 // PUT    /api/admin/items/:id { ... }   → update
 // DELETE /api/admin/items/:id
+//
+// v2 Function with native path-parameter routing — avoids the
+// netlify.toml :splat redirect that wasn't forwarding the id reliably.
 
 const FORMS = new Set(['tablet', 'capsule', 'syrup', 'cream', 'ointment', 'drops', 'injection']);
 const UNITS = new Set(['per_kg', 'per_dozen', 'per_piece']);
 
-export async function handler(event) {
+export default async (req, context) => {
   try {
-    requireAuth(event);
-    const sql = requireDb();
-    const id = intOrNull(event.queryStringParameters && event.queryStringParameters.id);
+    const auth = req.headers.get('authorization') || '';
+    const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
+    if (!verifyToken(token)) return jsonRes(401, { error: 'Unauthorized' });
 
-    if (event.httpMethod === 'GET') {
+    const sql = requireDb();
+    const id = intOrNull(context?.params?.id);
+
+    if (req.method === 'GET') {
       const rows = await sql`
         SELECT i.*, c.name AS category_name, c.section AS category_section
         FROM items i
         JOIN categories c ON c.id = i.category_id
         ORDER BY i.section ASC, c.sort ASC, i.sort ASC, i.id ASC`;
-      return json(200, rows);
+      return jsonRes(200, rows);
     }
 
-    if (event.httpMethod === 'POST') {
-      const b = await readJsonBody(event);
-      const v = assertItem(b, sql);
-      const p = await v;
+    if (req.method === 'POST') {
+      const b = await req.json();
+      const p = await assertItem(b, sql);
       const rows = await sql`
         INSERT INTO items (
           category_id, section, name, description, price, image, sort, is_active, is_featured, in_stock,
@@ -40,12 +45,12 @@ export async function handler(event) {
           ${p.brand}, ${p.dosage}, ${p.form}, ${p.pack_size}, ${p.requires_prescription}
         )
         RETURNING *`;
-      return json(201, rows[0]);
+      return jsonRes(201, rows[0]);
     }
 
-    if (event.httpMethod === 'PUT' || event.httpMethod === 'PATCH') {
-      if (!id) return json(400, { error: 'Missing id' });
-      const b = await readJsonBody(event);
+    if (req.method === 'PUT' || req.method === 'PATCH') {
+      if (!id) return jsonRes(400, { error: 'Missing id' });
+      const b = await req.json();
       const p = await assertItem(b, sql);
       const rows = await sql`
         UPDATE items SET
@@ -72,22 +77,27 @@ export async function handler(event) {
           updated_at = NOW()
         WHERE id = ${id}
         RETURNING *`;
-      if (!rows[0]) return json(404, { error: 'Not found' });
-      return json(200, rows[0]);
+      if (!rows[0]) return jsonRes(404, { error: 'Not found' });
+      return jsonRes(200, rows[0]);
     }
 
-    if (event.httpMethod === 'DELETE') {
-      if (!id) return json(400, { error: 'Missing id' });
+    if (req.method === 'DELETE') {
+      if (!id) return jsonRes(400, { error: 'Missing id' });
       const rows = await sql`DELETE FROM items WHERE id = ${id} RETURNING id`;
-      if (!rows[0]) return json(404, { error: 'Not found' });
-      return json(200, { deleted: rows[0].id });
+      if (!rows[0]) return jsonRes(404, { error: 'Not found' });
+      return jsonRes(200, { deleted: rows[0].id });
     }
 
-    return json(405, { error: 'Method not allowed' });
+    return jsonRes(405, { error: 'Method not allowed' });
   } catch (err) {
-    return errorResponse(err);
+    console.error('admin-items error:', err);
+    return jsonRes(err.statusCode || 500, { error: err.message || 'Internal error' });
   }
-}
+};
+
+export const config = {
+  path: ['/api/admin/items', '/api/admin/items/:id'],
+};
 
 async function assertItem(b, sql) {
   if (!b || typeof b.name !== 'string' || !b.name.trim()) throw http(400, 'name is required');
@@ -142,6 +152,13 @@ async function assertItem(b, sql) {
     pack_size: section === 'medicines' ? s(b.pack_size) : '',
     requires_prescription: section === 'medicines' ? bool(b.requires_prescription, false) : false,
   };
+}
+
+function jsonRes(status, body) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' },
+  });
 }
 
 function safeJson(x) { try { return JSON.parse(x); } catch { return null; } }

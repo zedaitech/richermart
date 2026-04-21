@@ -37,25 +37,9 @@
   to = "/.netlify/functions/admin-store"
   status = 200
 
-[[redirects]]
-  from = "/api/admin/categories"
-  to = "/.netlify/functions/admin-categories"
-  status = 200
-
-[[redirects]]
-  from = "/api/admin/categories/*"
-  to = "/.netlify/functions/admin-categories?id=:splat"
-  status = 200
-
-[[redirects]]
-  from = "/api/admin/items"
-  to = "/.netlify/functions/admin-items"
-  status = 200
-
-[[redirects]]
-  from = "/api/admin/items/*"
-  to = "/.netlify/functions/admin-items?id=:splat"
-  status = 200
+# /api/admin/categories and /api/admin/items (+ their :id variants) are
+# served by v2 Functions with their own `export const config = { path: ... }`
+# routing — no redirect needed.
 
 # Keep seeder out of search engines if site is public
 [[headers]]
