@@ -5,7 +5,10 @@
 [functions]
   node_bundler = "esbuild"
 
-# Friendly public routes → functions
+# Friendly public routes → functions.
+# Use `*` splat (not `:id`) — the :id placeholder was not being forwarded
+# to the function's query string consistently on Netlify production.
+
 [[redirects]]
   from = "/api/catalog"
   to = "/.netlify/functions/catalog"
@@ -17,23 +20,23 @@
   status = 200
 
 [[redirects]]
-  from = "/api/rx/:id"
-  to = "/.netlify/functions/rx-file?id=:id"
+  from = "/api/rx/*"
+  to = "/.netlify/functions/rx-file?id=:splat"
   status = 200
 
 [[redirects]]
-  from = "/api/assets/:id"
-  to = "/.netlify/functions/asset-file?id=:id"
-  status = 200
-
-[[redirects]]
-  from = "/api/admin/upload"
-  to = "/.netlify/functions/admin-upload"
+  from = "/api/assets/*"
+  to = "/.netlify/functions/asset-file?id=:splat"
   status = 200
 
 [[redirects]]
   from = "/api/admin/login"
   to = "/.netlify/functions/admin-login"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/upload"
+  to = "/.netlify/functions/admin-upload"
   status = 200
 
 [[redirects]]
@@ -47,8 +50,8 @@
   status = 200
 
 [[redirects]]
-  from = "/api/admin/categories/:id"
-  to = "/.netlify/functions/admin-categories?id=:id"
+  from = "/api/admin/categories/*"
+  to = "/.netlify/functions/admin-categories?id=:splat"
   status = 200
 
 [[redirects]]
@@ -57,11 +60,11 @@
   status = 200
 
 [[redirects]]
-  from = "/api/admin/items/:id"
-  to = "/.netlify/functions/admin-items?id=:id"
+  from = "/api/admin/items/*"
+  to = "/.netlify/functions/admin-items?id=:splat"
   status = 200
 
-# Keep these out of the deployed site
+# Keep seeder out of search engines if site is public
 [[headers]]
   for = "/admin/seed.mjs"
   [headers.values]
