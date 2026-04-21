@@ -67,7 +67,8 @@ async function seedFromMenuJson() {
        google_maps_url = $5, status = $6, address = $7,
        drug_license_no = $8, fssai_license_no = $9,
        pharmacist_name = $10, gstin = $11,
-       upi_id = $12, upi_merchant_name = $13, upi_qr_image = $14
+       upi_id = $12, upi_merchant_name = $13, upi_qr_image = $14,
+       hours = $15
      WHERE id = 1`,
     [
       str(s.name), str(s.tagline), str(s.phone), str(s.logo),
@@ -75,6 +76,7 @@ async function seedFromMenuJson() {
       str(s.drug_license_no), str(s.fssai_license_no),
       str(s.pharmacist_name), str(s.gstin),
       str(s.upi_id), str(s.upi_merchant_name), str(s.upi_qr_image),
+      s.hours ? JSON.stringify(s.hours) : null,
     ],
   );
   console.log(`✓ Seeded store: ${s.name}`);

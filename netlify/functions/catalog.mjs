@@ -47,6 +47,7 @@ export async function handler(event) {
           upi_id: store.upi_id || '',
           upi_merchant_name: store.upi_merchant_name || '',
           upi_qr_image: store.upi_qr_image || '',
+          hours: store.hours || null,
         },
         categories,
       }),

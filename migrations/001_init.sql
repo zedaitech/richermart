@@ -17,7 +17,14 @@ CREATE TABLE IF NOT EXISTS store (
   upi_id                TEXT NOT NULL DEFAULT '',
   upi_merchant_name     TEXT NOT NULL DEFAULT '',
   upi_qr_image          TEXT NOT NULL DEFAULT '',
+  hours                 JSONB,
   CONSTRAINT store_singleton CHECK (id = 1)
+);
+
+CREATE TABLE IF NOT EXISTS login_attempts (
+  ip                TEXT PRIMARY KEY,
+  attempts          INTEGER NOT NULL DEFAULT 0,
+  first_attempt_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 INSERT INTO store (id) VALUES (1) ON CONFLICT DO NOTHING;

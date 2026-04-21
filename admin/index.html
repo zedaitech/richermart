@@ -143,6 +143,56 @@
     .checkbox { display: inline-flex; align-items: center; gap: 8px; font-size: 0.86rem; cursor: pointer; }
     .checkbox input { width: 16px; height: 16px; accent-color: var(--primary); }
 
+    /* Weekly hours editor */
+    .hours-grid { display: flex; flex-direction: column; gap: 8px; }
+    .hours-row {
+      display: grid;
+      grid-template-columns: 50px 92px 1fr 22px 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+    .hours-day { font-weight: 600; font-size: 0.86rem; color: var(--text-secondary); }
+    .hours-closed { font-size: 0.8rem; white-space: nowrap; }
+    .hours-time { min-height: 36px; padding: 6px 10px; }
+    .hours-time[disabled] { background: var(--surface2); color: var(--text-muted); }
+    .hours-sep { text-align: center; color: var(--text-muted); font-size: 0.78rem; }
+    .hours-apply { padding: 6px 10px; font-size: 0.76rem; min-height: 36px; }
+    @media (max-width: 620px) {
+      .hours-row {
+        grid-template-columns: 1fr;
+        gap: 4px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .hours-sep { display: none; }
+    }
+
+    /* Item editor image upload */
+    .item-image-picker { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; }
+    .item-image-thumb {
+      position: relative;
+      width: 76px;
+      height: 76px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .item-image-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .item-image-thumb-remove {
+      position: absolute;
+      top: -6px; right: -6px;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--accent-red); color: #fff;
+      border: 2px solid var(--surface);
+      display: grid; place-items: center;
+      font-size: 14px; line-height: 1;
+      cursor: pointer;
+    }
+    .item-image-url { flex: 1; min-width: 180px; }
+
     /* ===== Cards / tables ===== */
     .card {
       background: var(--surface); border: 1px solid var(--border);
@@ -316,19 +366,43 @@
               <label class="form-label">Google Maps URL</label>
               <input class="form-input" x-model="store.google_maps_url">
             </div>
-            <div class="form-row">
-              <label class="form-label">Status</label>
-              <select class="form-select" x-model="store.status">
-                <option value="Open">Open</option>
-                <option value="Closed">Closed</option>
-              </select>
-            </div>
           </div>
 
           <div class="form-row" style="margin-top:12px">
             <label class="form-label">Store address</label>
             <textarea class="form-input" x-model="store.address" rows="2" placeholder="Full street address shown in the website footer"></textarea>
             <p class="form-help">Shown on the storefront footer. Leave blank to hide.</p>
+          </div>
+
+          <h3 style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--primary);margin:20px 0 10px">Weekly hours</h3>
+          <p class="form-help" style="margin:-6px 0 12px">
+            The storefront badge updates automatically based on these times. Times are 24-hour.
+          </p>
+          <div class="hours-grid">
+            <template x-for="day in dayList" :key="day.key">
+              <div class="hours-row">
+                <span class="hours-day" x-text="day.label"></span>
+                <label class="checkbox hours-closed">
+                  <input type="checkbox"
+                    :checked="isDayClosed(day.key)"
+                    @change="toggleDayClosed(day.key, $event.target.checked)">
+                  Closed
+                </label>
+                <input type="time" class="form-input hours-time"
+                  :value="(store.hours && store.hours[day.key] && store.hours[day.key].open) || '08:00'"
+                  :disabled="isDayClosed(day.key)"
+                  @change="setDayTime(day.key, 'open', $event.target.value)">
+                <span class="hours-sep">to</span>
+                <input type="time" class="form-input hours-time"
+                  :value="(store.hours && store.hours[day.key] && store.hours[day.key].close) || '22:00'"
+                  :disabled="isDayClosed(day.key)"
+                  @change="setDayTime(day.key, 'close', $event.target.value)">
+                <button type="button" class="btn btn--ghost hours-apply"
+                  x-show="day.key === 'mon'"
+                  @click="applyHoursToAllDays()"
+                  title="Copy Monday's hours to every open day">Apply to all</button>
+              </div>
+            </template>
           </div>
 
           <h3 style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent-blue);margin:20px 0 10px">Payment QR</h3>
@@ -600,9 +674,24 @@
         </div>
 
         <div class="form-row">
-          <label class="form-label">Image URL</label>
-          <input class="form-input" x-model="itemEditor.form.image" placeholder="https://...">
-          <p class="form-help">Paste any public URL. Falls back to an emoji if blank.</p>
+          <label class="form-label">Product image</label>
+          <div class="item-image-picker">
+            <template x-if="itemEditor.form.image">
+              <div class="item-image-thumb">
+                <img :src="itemEditor.form.image" alt="">
+                <button type="button" class="item-image-thumb-remove"
+                  @click="itemEditor.form.image = ''" title="Remove image">&times;</button>
+              </div>
+            </template>
+            <label class="btn" style="cursor:pointer">
+              <span x-text="itemImageUploading ? 'Uploading...' : (itemEditor.form.image ? 'Replace' : 'Upload image')"></span>
+              <input type="file" accept="image/*" @change="uploadItemImage($event)"
+                style="display:none" :disabled="itemImageUploading">
+            </label>
+            <input class="form-input item-image-url" x-model="itemEditor.form.image"
+              placeholder="…or paste an image URL">
+          </div>
+          <p class="form-help">Upload from your device, or paste a public URL. Falls back to an emoji if blank.</p>
         </div>
 
         <!-- Fruits-only -->
@@ -718,6 +807,16 @@
         // store save flag
         storeBusy: false, storeSaved: false,
         qrUploading: false,
+        itemImageUploading: false,
+        dayList: [
+          { key: 'mon', label: 'Mon' },
+          { key: 'tue', label: 'Tue' },
+          { key: 'wed', label: 'Wed' },
+          { key: 'thu', label: 'Thu' },
+          { key: 'fri', label: 'Fri' },
+          { key: 'sat', label: 'Sat' },
+          { key: 'sun', label: 'Sun' },
+        ],
 
         init() {
           this.token = localStorage.getItem('gm_admin_token') || '';
@@ -794,36 +893,96 @@
           finally { this.storeBusy = false; }
         },
 
+        // Shared upload helper — used by QR upload and item-image upload.
+        async uploadFile(file, { maxMb = 3 } = {}) {
+          if (!file) return null;
+          if (file.size > maxMb * 1024 * 1024) {
+            this.showToast(`Image too large (max ${maxMb} MB)`);
+            return null;
+          }
+          const form = new FormData();
+          form.append('file', file);
+          const res = await fetch('/api/admin/upload', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + this.token },
+            body: form,
+          });
+          if (!res.ok) {
+            const j = await res.json().catch(() => ({}));
+            throw new Error(j.error || `Upload failed (${res.status})`);
+          }
+          const { url } = await res.json();
+          return url;
+        },
+
         async uploadQr(ev) {
           const file = ev.target.files && ev.target.files[0];
-          if (!file) return;
-          if (file.size > 3 * 1024 * 1024) {
-            this.showToast('Image too large (max 3 MB)');
-            ev.target.value = '';
-            return;
-          }
           this.qrUploading = true;
           try {
-            const form = new FormData();
-            form.append('file', file);
-            const res = await fetch('/api/admin/upload', {
-              method: 'POST',
-              headers: { 'Authorization': 'Bearer ' + this.token },
-              body: form,
-            });
-            if (!res.ok) {
-              const j = await res.json().catch(() => ({}));
-              throw new Error(j.error || `Upload failed (${res.status})`);
+            const url = await this.uploadFile(file);
+            if (url) {
+              this.store.upi_qr_image = url;
+              this.showToast('QR uploaded — click Save changes to keep it');
             }
-            const { url } = await res.json();
-            this.store.upi_qr_image = url;
-            this.showToast('QR uploaded — click Save changes to keep it');
           } catch (e) {
             this.showToast(e.message);
           } finally {
             this.qrUploading = false;
             ev.target.value = '';
           }
+        },
+
+        async uploadItemImage(ev) {
+          const file = ev.target.files && ev.target.files[0];
+          this.itemImageUploading = true;
+          try {
+            const url = await this.uploadFile(file);
+            if (url) {
+              this.itemEditor.form.image = url;
+              this.showToast('Image uploaded — click Save to keep it');
+            }
+          } catch (e) {
+            this.showToast(e.message);
+          } finally {
+            this.itemImageUploading = false;
+            ev.target.value = '';
+          }
+        },
+
+        // === HOURS ===
+        isDayClosed(key) {
+          return !!(this.store.hours && this.store.hours[key] && this.store.hours[key].closed);
+        },
+        toggleDayClosed(key, closed) {
+          if (!this.store.hours) this.store.hours = {};
+          if (closed) {
+            this.store.hours[key] = { closed: true };
+          } else {
+            this.store.hours[key] = { open: '08:00', close: '22:00' };
+          }
+        },
+        setDayTime(key, field, value) {
+          if (!this.store.hours) this.store.hours = {};
+          const cur = this.store.hours[key];
+          if (!cur || cur.closed) {
+            this.store.hours[key] = { open: '08:00', close: '22:00', [field]: value };
+          } else {
+            this.store.hours[key] = { ...cur, [field]: value };
+          }
+        },
+        applyHoursToAllDays() {
+          if (!this.store.hours || !this.store.hours.mon) {
+            this.showToast('Set Monday first');
+            return;
+          }
+          const mon = this.store.hours.mon;
+          if (mon.closed) { this.showToast("Monday is marked closed — nothing to copy"); return; }
+          for (const d of this.dayList) {
+            if (d.key === 'mon') continue;
+            if (this.isDayClosed(d.key)) continue;  // keep closed days closed
+            this.store.hours[d.key] = { open: mon.open, close: mon.close };
+          }
+          this.showToast('Copied Monday to all open days');
         },
 
         // === CATEGORIES ===

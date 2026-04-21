@@ -73,3 +73,46 @@ export function requireAuth(event) {
     throw err;
   }
 }
+
+// ===== Login rate-limit =====
+// Per-IP sliding-ish window stored in the login_attempts table.
+// Window: 5 attempts / 5 minutes / IP.
+
+export const RATE_LIMIT_WINDOW_SECONDS = 5 * 60;
+export const RATE_LIMIT_MAX_ATTEMPTS = 5;
+
+export function getClientIp(event) {
+  const h = (event && event.headers) || {};
+  const nf = h['x-nf-client-connection-ip'] || h['X-Nf-Client-Connection-Ip'];
+  if (nf) return String(nf).trim();
+  const fwd = h['x-forwarded-for'] || h['X-Forwarded-For'];
+  if (fwd) return String(fwd).split(',')[0].trim();
+  return 'unknown';
+}
+
+export async function checkAndBumpRateLimit(sql, ip) {
+  // Reset the window if the oldest attempt for this IP is outside the window.
+  await sql`
+    DELETE FROM login_attempts
+    WHERE ip = ${ip}
+      AND first_attempt_at < NOW() - INTERVAL '5 minutes'`;
+  const rows = await sql`SELECT attempts FROM login_attempts WHERE ip = ${ip}`;
+  if (rows[0] && rows[0].attempts >= RATE_LIMIT_MAX_ATTEMPTS) {
+    const err = new Error('Too many attempts. Try again in a few minutes.');
+    err.statusCode = 429;
+    err.retryAfter = RATE_LIMIT_WINDOW_SECONDS;
+    throw err;
+  }
+}
+
+export async function recordFailedAttempt(sql, ip) {
+  await sql`
+    INSERT INTO login_attempts (ip, attempts, first_attempt_at)
+    VALUES (${ip}, 1, NOW())
+    ON CONFLICT (ip) DO UPDATE
+      SET attempts = login_attempts.attempts + 1`;
+}
+
+export async function clearAttempts(sql, ip) {
+  await sql`DELETE FROM login_attempts WHERE ip = ${ip}`;
+}

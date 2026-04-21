@@ -251,12 +251,22 @@
       font-weight: 600;
     }
 
+    .hero-meta--closed {
+      background: var(--accent-red-tint);
+      color: #7f1d1d;
+    }
+
     .status-dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
       background: var(--primary);
       animation: pulse 2s ease infinite;
+    }
+
+    .hero-meta--closed .status-dot {
+      background: var(--accent-red);
+      animation: none;
     }
 
     @keyframes pulse {
@@ -1525,13 +1535,65 @@
       border-radius: var(--radius-sm);
       background: var(--primary-tint);
       color: var(--primary-ink);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       font-size: 0.82rem;
       line-height: 1.5;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    a.footer-address:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(22, 163, 74, 0.18);
     }
 
     .footer-address svg { flex-shrink: 0; margin-top: 2px; }
     .footer-address strong { display: block; font-weight: 700; margin-bottom: 2px; font-size: 0.82rem; }
+    .footer-directions {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      opacity: 0.8;
+    }
+
+    .footer-contact {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .footer-contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+
+    .footer-contact-link:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .footer-contact-link--wa {
+      background: var(--whatsapp);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .footer-contact-link--wa:hover {
+      background: #1ebe57;
+      color: #fff;
+    }
 
     .footer-credit {
       text-align: center;
@@ -1805,9 +1867,9 @@
       <h1 x-text="store.name"></h1>
       <p class="tagline" x-text="store.tagline"></p>
 
-      <div class="hero-meta" x-show="store.status">
+      <div class="hero-meta" :class="!openStatus.open && 'hero-meta--closed'">
         <span class="status-dot"></span>
-        <span x-text="store.status === 'Closed' ? 'Closed' : 'Open Now'"></span>
+        <span x-text="openStatus.label"></span>
       </div>
 
       <div class="hero-actions">
@@ -2018,7 +2080,10 @@
 
     <!-- Footer — address + compliance -->
     <footer class="site-footer">
-      <div x-show="store.address" class="footer-address">
+      <a x-show="store.address"
+         :href="store.google_maps_url || ('https://maps.google.com/?q=' + encodeURIComponent(store.address))"
+         target="_blank" rel="noopener" class="footer-address"
+         aria-label="Open store location in Google Maps">
         <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
@@ -2027,7 +2092,27 @@
         <div>
           <strong>Visit our store</strong>
           <span x-text="store.address"></span>
+          <span class="footer-directions">Get directions &rarr;</span>
         </div>
+      </a>
+
+      <div x-show="store.phone" class="footer-contact">
+        <a :href="'tel:+' + store.phone" class="footer-contact-link"
+           aria-label="Call the store">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+          </svg>
+          <span x-text="formatPhone(store.phone)"></span>
+        </a>
+        <a :href="'https://wa.me/' + store.phone" target="_blank" rel="noopener"
+           class="footer-contact-link footer-contact-link--wa"
+           aria-label="Chat on WhatsApp">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+          WhatsApp
+        </a>
       </div>
 
       <!-- Compliance + medical disclaimer — relevant only to the Medicines section -->
@@ -2402,6 +2487,9 @@
           } catch (e) { console.error('Failed to load catalog:', e); }
           this.loading = false;
 
+          // Refresh the hours badge once a minute.
+          setInterval(() => { this._openStatusTick++; }, 60_000);
+
           // Scroll tracking
           let ticking = false;
           window.addEventListener('scroll', () => {
@@ -2457,6 +2545,50 @@
 
         unitLabel(u) {
           return u === 'per_kg' ? 'per kg' : u === 'per_dozen' ? 'per dozen' : u === 'per_piece' ? 'per piece' : '';
+        },
+
+        // "+91 93803 41684" from a raw 91-prefixed number
+        formatPhone(p) {
+          const d = String(p || '').replace(/\D/g, '');
+          if (d.length === 12 && d.startsWith('91')) {
+            return `+91 ${d.slice(2, 7)} ${d.slice(7)}`;
+          }
+          if (d.length === 10) return `+91 ${d.slice(0, 5)} ${d.slice(5)}`;
+          return '+' + d;
+        },
+
+        // "22:00" → "10pm" — small display helper for the hours badge
+        fmt12h(t) {
+          const m = /^(\d{1,2}):(\d{2})$/.exec(String(t || ''));
+          if (!m) return t;
+          let h = parseInt(m[1], 10);
+          const mm = parseInt(m[2], 10);
+          const ampm = h >= 12 ? 'pm' : 'am';
+          h = h % 12; if (h === 0) h = 12;
+          return mm === 0 ? `${h}${ampm}` : `${h}:${m[2]}${ampm}`;
+        },
+
+        // _openStatusTick is bumped by a 60s interval so the getter re-computes.
+        _openStatusTick: 0,
+        get openStatus() {
+          this._openStatusTick;              // track for reactivity
+          const h = this.store.hours;
+          if (!h) return { open: true, label: 'Open' };
+          const now = new Date();
+          const keys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+          const today = h[keys[now.getDay()]];
+          if (!today || today.closed) return { open: false, label: 'Closed today' };
+          const mins = now.getHours() * 60 + now.getMinutes();
+          const parse = (s) => {
+            const m = /^(\d{1,2}):(\d{2})$/.exec(s || '');
+            return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : null;
+          };
+          const openM = parse(today.open);
+          const closeM = parse(today.close);
+          if (openM == null || closeM == null) return { open: true, label: 'Open' };
+          if (mins < openM)  return { open: false, label: `Opens at ${this.fmt12h(today.open)}` };
+          if (mins >= closeM) return { open: false, label: 'Closed for today' };
+          return { open: true, label: `Open · Until ${this.fmt12h(today.close)}` };
         },
 
         getEmoji(item, catName) {

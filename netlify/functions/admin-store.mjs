@@ -17,6 +17,7 @@ export async function handler(event) {
     if (event.httpMethod === 'PUT' || event.httpMethod === 'PATCH') {
       requireAuth(event);
       const b = await readJsonBody(event);
+      const hoursJson = b.hours && typeof b.hours === 'object' ? JSON.stringify(b.hours) : null;
       const rows = await sql`
         UPDATE store SET
           name = ${s(b.name)},
@@ -32,7 +33,8 @@ export async function handler(event) {
           gstin = ${s(b.gstin)},
           upi_id = ${s(b.upi_id)},
           upi_merchant_name = ${s(b.upi_merchant_name)},
-          upi_qr_image = ${s(b.upi_qr_image)}
+          upi_qr_image = ${s(b.upi_qr_image)},
+          hours = ${hoursJson}::jsonb
         WHERE id = 1
         RETURNING *`;
       return json(200, rows[0]);

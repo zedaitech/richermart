@@ -13,7 +13,16 @@
     "gstin": "27ABCDE1234F1Z5",
     "upi_id": "",
     "upi_merchant_name": "",
-    "upi_qr_image": ""
+    "upi_qr_image": "",
+    "hours": {
+      "mon": { "open": "08:00", "close": "22:00" },
+      "tue": { "open": "08:00", "close": "22:00" },
+      "wed": { "open": "08:00", "close": "22:00" },
+      "thu": { "open": "08:00", "close": "22:00" },
+      "fri": { "open": "08:00", "close": "22:00" },
+      "sat": { "open": "08:00", "close": "22:00" },
+      "sun": { "open": "09:00", "close": "21:00" }
+    }
   },
   "categories": [
     {
