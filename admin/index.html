@@ -331,18 +331,34 @@
             <p class="form-help">Shown on the storefront footer. Leave blank to hide.</p>
           </div>
 
-          <h3 style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent-blue);margin:20px 0 10px">Payment (UPI)</h3>
-          <div class="form-grid-2">
-            <div class="form-row">
-              <label class="form-label">UPI ID</label>
-              <input class="form-input" x-model="store.upi_id" placeholder="e.g. richermart@okaxis">
-              <p class="form-help">Leave blank to hide the QR on the storefront.</p>
-            </div>
-            <div class="form-row">
-              <label class="form-label">UPI merchant name</label>
-              <input class="form-input" x-model="store.upi_merchant_name" placeholder="Name shown to the buyer in their UPI app">
-            </div>
+          <h3 style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent-blue);margin:20px 0 10px">Payment QR</h3>
+          <div class="form-row">
+            <label class="form-label">UPI QR image</label>
+            <p class="form-help" style="margin-bottom:8px">
+              Upload the QR from your UPI app (GPay / PhonePe / Paytm / bank). Shown in the storefront cart for customers to scan.
+            </p>
+            <template x-if="store.upi_qr_image">
+              <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:8px">
+                <img :src="store.upi_qr_image" alt="Current UPI QR" style="width:120px;height:120px;object-fit:contain;border:1px solid var(--border);border-radius:10px;padding:6px;background:#fff">
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label class="btn" style="cursor:pointer">
+                    Replace
+                    <input type="file" accept="image/*" @change="uploadQr($event)" style="display:none">
+                  </label>
+                  <button class="btn btn--danger" @click="store.upi_qr_image = ''">Remove</button>
+                </div>
+              </div>
+            </template>
+            <template x-if="!store.upi_qr_image">
+              <label class="btn btn--primary" style="cursor:pointer;display:inline-flex;align-self:flex-start">
+                <span x-text="qrUploading ? 'Uploading...' : 'Upload QR image'"></span>
+                <input type="file" accept="image/*" @change="uploadQr($event)" style="display:none" :disabled="qrUploading">
+              </label>
+            </template>
           </div>
+          <p class="form-help" style="margin-top:-6px;margin-bottom:10px">
+            Remember to click <strong>Save changes</strong> after uploading.
+          </p>
 
           <h3 style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-muted);margin:20px 0 10px">Compliance</h3>
           <div class="form-grid-2">
@@ -701,6 +717,7 @@
         itemEditor: { open: false, mode: 'new', busy: false, error: '', form: emptyItem() },
         // store save flag
         storeBusy: false, storeSaved: false,
+        qrUploading: false,
 
         init() {
           this.token = localStorage.getItem('gm_admin_token') || '';
@@ -775,6 +792,38 @@
             this.showToast('Store updated');
           } catch (e) { this.showToast(e.message); }
           finally { this.storeBusy = false; }
+        },
+
+        async uploadQr(ev) {
+          const file = ev.target.files && ev.target.files[0];
+          if (!file) return;
+          if (file.size > 3 * 1024 * 1024) {
+            this.showToast('Image too large (max 3 MB)');
+            ev.target.value = '';
+            return;
+          }
+          this.qrUploading = true;
+          try {
+            const form = new FormData();
+            form.append('file', file);
+            const res = await fetch('/api/admin/upload', {
+              method: 'POST',
+              headers: { 'Authorization': 'Bearer ' + this.token },
+              body: form,
+            });
+            if (!res.ok) {
+              const j = await res.json().catch(() => ({}));
+              throw new Error(j.error || `Upload failed (${res.status})`);
+            }
+            const { url } = await res.json();
+            this.store.upi_qr_image = url;
+            this.showToast('QR uploaded — click Save changes to keep it');
+          } catch (e) {
+            this.showToast(e.message);
+          } finally {
+            this.qrUploading = false;
+            ev.target.value = '';
+          }
         },
 
         // === CATEGORIES ===

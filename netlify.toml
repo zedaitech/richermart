@@ -22,6 +22,16 @@
   status = 200
 
 [[redirects]]
+  from = "/api/assets/:id"
+  to = "/.netlify/functions/asset-file?id=:id"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/upload"
+  to = "/.netlify/functions/admin-upload"
+  status = 200
+
+[[redirects]]
   from = "/api/admin/login"
   to = "/.netlify/functions/admin-login"
   status = 200

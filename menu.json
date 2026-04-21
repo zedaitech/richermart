@@ -11,8 +11,9 @@
     "fssai_license_no": "11522998000437",
     "pharmacist_name": "Dr. R. Kulkarni, B.Pharm",
     "gstin": "27ABCDE1234F1Z5",
-    "upi_id": "richermart@okaxis",
-    "upi_merchant_name": "Richer Mart"
+    "upi_id": "",
+    "upi_merchant_name": "",
+    "upi_qr_image": ""
   },
   "categories": [
     {

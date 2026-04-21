@@ -31,7 +31,8 @@ export async function handler(event) {
           pharmacist_name = ${s(b.pharmacist_name)},
           gstin = ${s(b.gstin)},
           upi_id = ${s(b.upi_id)},
-          upi_merchant_name = ${s(b.upi_merchant_name)}
+          upi_merchant_name = ${s(b.upi_merchant_name)},
+          upi_qr_image = ${s(b.upi_qr_image)}
         WHERE id = 1
         RETURNING *`;
       return json(200, rows[0]);

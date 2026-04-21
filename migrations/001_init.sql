@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS store (
   gstin                 TEXT NOT NULL DEFAULT '',
   upi_id                TEXT NOT NULL DEFAULT '',
   upi_merchant_name     TEXT NOT NULL DEFAULT '',
+  upi_qr_image          TEXT NOT NULL DEFAULT '',
   CONSTRAINT store_singleton CHECK (id = 1)
 );
 

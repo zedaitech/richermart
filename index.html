@@ -40,9 +40,6 @@
   <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/focus@3.x.x/dist/cdn.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-  <!-- QR code generator (used for UPI payment QR in cart) -->
-  <script defer src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-
   <style>
     *,
     *::before,
@@ -1596,44 +1593,6 @@
       line-height: 1.45;
     }
 
-    .upi-id-row {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      margin-top: 8px;
-      padding: 6px 8px;
-      background: var(--surface2);
-      border-radius: var(--radius-xs);
-      font-size: 0.76rem;
-      font-variant-numeric: tabular-nums;
-      font-weight: 600;
-    }
-
-    .upi-id-row code {
-      flex: 1;
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      font-family: inherit;
-      color: var(--text);
-    }
-
-    .upi-copy-btn {
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 4px 8px;
-      border-radius: var(--radius-xs);
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .upi-copy-btn:hover { background: var(--primary-hover); }
-    .upi-copy-btn.ok { background: var(--primary-ink); }
 
     /* Responsive */
     @media (min-width: 520px) {
@@ -2147,27 +2106,19 @@
           </div>
         </div>
 
-        <!-- UPI QR — shown only if the admin has configured a UPI ID -->
-        <div x-show="cart.length > 0 && store.upi_id" x-effect="renderUpiQr()" class="upi-block">
+        <!-- UPI payment QR — shown only if the admin has uploaded a QR image -->
+        <div x-show="cart.length > 0 && store.upi_qr_image" class="upi-block">
           <div class="upi-qr-wrap" aria-label="UPI payment QR">
-            <img x-show="upiQrUrl" :src="upiQrUrl" alt="Scan to pay via UPI" width="100" height="100">
-            <span x-show="!upiQrUrl" style="font-size:0.7rem;color:var(--text-muted)">Loading...</span>
+            <img :src="store.upi_qr_image" alt="Scan to pay via UPI">
           </div>
           <div class="upi-info">
-            <h4>
-              <span>💳 Pay via UPI</span>
-            </h4>
+            <h4><span>💳 Pay via UPI</span></h4>
             <p>
-              Scan with any UPI app (GPay, PhonePe, Paytm, BHIM) to prepay
+              Scan with any UPI app (GPay, PhonePe, Paytm, BHIM) and pay
               <strong x-text="' ' + fmtPriceRupee(cartTotal)"></strong>.
             </p>
-            <div class="upi-id-row">
-              <code x-text="store.upi_id"></code>
-              <button class="upi-copy-btn" :class="upiCopied && 'ok'" @click="copyUpiId()"
-                x-text="upiCopied ? 'Copied' : 'Copy'"></button>
-            </div>
             <p style="font-size:0.72rem;color:var(--text-muted);margin-top:6px">
-              Payment is optional — you can also pay on delivery/pickup.
+              Payment is optional — you can also pay on delivery or pickup.
               After paying, tap "Place Order" to confirm via WhatsApp.
             </p>
           </div>
@@ -2211,9 +2162,6 @@
         toast: false, toastText: '', toastLeaving: false, toastTimer: null,
         _observer: null,
 
-        // UPI QR
-        upiQrUrl: '', upiCopied: false,
-        _upiKey: '',                 // last-rendered "amount|upi_id" to debounce reflows
 
         filterOptions: {
           fruits: [
@@ -2539,50 +2487,6 @@
           }
         },
 
-        // UPI QR — regenerates when the total or UPI id changes.
-        renderUpiQr() {
-          const amount = this.cartTotal;
-          const upi = this.store.upi_id;
-          const key = `${upi}|${amount}`;
-          if (!upi || amount <= 0) { this.upiQrUrl = ''; this._upiKey = ''; return; }
-          if (key === this._upiKey) return;
-          this._upiKey = key;
-
-          if (typeof window === 'undefined' || typeof window.QRCode === 'undefined') {
-            // Library still loading — try again once it's ready.
-            setTimeout(() => { this._upiKey = ''; this.renderUpiQr(); }, 250);
-            return;
-          }
-
-          const name = encodeURIComponent(this.store.upi_merchant_name || this.store.name || 'Store');
-          const note = encodeURIComponent(`${this.store.name || 'Store'} order`);
-          const link = `upi://pay?pa=${encodeURIComponent(upi)}&pn=${name}&am=${amount}&cu=INR&tn=${note}`;
-
-          window.QRCode.toDataURL(link, {
-            width: 220,
-            margin: 1,
-            color: { dark: '#0f172a', light: '#ffffff' },
-          }).then(url => { this.upiQrUrl = url; })
-            .catch(err => { console.warn('QR render failed:', err); this.upiQrUrl = ''; });
-        },
-
-        async copyUpiId() {
-          if (!this.store.upi_id) return;
-          try {
-            await navigator.clipboard.writeText(this.store.upi_id);
-            this.upiCopied = true;
-            setTimeout(() => this.upiCopied = false, 1600);
-          } catch {
-            // Fallback for browsers without clipboard API
-            const ta = document.createElement('textarea');
-            ta.value = this.store.upi_id;
-            document.body.appendChild(ta);
-            ta.select();
-            try { document.execCommand('copy'); this.upiCopied = true; setTimeout(() => this.upiCopied = false, 1600); } catch {}
-            document.body.removeChild(ta);
-          }
-        },
-
         // Toast
         showToast(text) {
           clearTimeout(this.toastTimer);
@@ -2656,10 +2560,6 @@
           }
 
           msg += `${line}\n\u{1F4B0} *Grand Total: ${this.fmtPriceRupee(this.cartTotal)}*\n`;
-
-          if (this.store.upi_id) {
-            msg += `\n\u{1F4B3} Pay via UPI: ${this.store.upi_id}\n`;
-          }
 
           window.open(`https://wa.me/${this.store.phone}?text=${encodeURIComponent(msg)}`, '_blank');
         },
