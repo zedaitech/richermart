@@ -33,6 +33,9 @@ export default async (req, context) => {
     if (req.method === 'POST') {
       const b = await req.json();
       const p = await assertItem(b, sql);
+      // weight_options is jsonb — Neon's driver encodes JS arrays as Postgres
+      // arrays, so stringify first and cast text → jsonb.
+      const weightJson = p.weight_options ? JSON.stringify(p.weight_options) : null;
       const rows = await sql`
         INSERT INTO items (
           category_id, section, name, description, price, image, sort, is_active, is_featured, in_stock,
@@ -41,7 +44,7 @@ export default async (req, context) => {
         ) VALUES (
           ${p.category_id}, ${p.section}, ${p.name}, ${p.description}, ${p.price}, ${p.image},
           ${p.sort}, ${p.is_active}, ${p.is_featured}, ${p.in_stock},
-          ${p.unit}, ${p.weight_options}, ${p.is_organic}, ${p.origin}, ${p.is_seasonal},
+          ${p.unit}, ${weightJson}::jsonb, ${p.is_organic}, ${p.origin}, ${p.is_seasonal},
           ${p.brand}, ${p.dosage}, ${p.form}, ${p.pack_size}, ${p.requires_prescription}
         )
         RETURNING *`;
@@ -52,6 +55,7 @@ export default async (req, context) => {
       if (!id) return jsonRes(400, { error: 'Missing id' });
       const b = await req.json();
       const p = await assertItem(b, sql);
+      const weightJson = p.weight_options ? JSON.stringify(p.weight_options) : null;
       const rows = await sql`
         UPDATE items SET
           category_id = ${p.category_id},
@@ -65,7 +69,7 @@ export default async (req, context) => {
           is_featured = ${p.is_featured},
           in_stock = ${p.in_stock},
           unit = ${p.unit},
-          weight_options = ${p.weight_options},
+          weight_options = ${weightJson}::jsonb,
           is_organic = ${p.is_organic},
           origin = ${p.origin},
           is_seasonal = ${p.is_seasonal},
