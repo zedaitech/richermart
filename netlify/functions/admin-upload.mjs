@@ -22,7 +22,9 @@ export default async (req) => {
     const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
     if (!verifyToken(token)) return jsonRes(401, { error: 'Unauthorized' });
 
-    const form = await req.formData();
+    let form;
+    try { form = await req.formData(); }
+    catch { return jsonRes(400, { error: 'Body must be multipart/form-data' }); }
     const file = form.get('file');
     if (!file || typeof file === 'string') return jsonRes(400, { error: 'No file field' });
     if (file.size === 0) return jsonRes(400, { error: 'Empty upload' });
